@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/instance_manager.dart';
+import 'package:lms_student/features/courses/controllers/courses_controller.dart';
 import 'package:lms_student/features/home/controller/home_controller.dart';
 import 'package:lms_student/features/home/models/course.dart';
 import 'package:lms_student/features/home/services/grades_helper.dart';
@@ -47,7 +48,9 @@ class SubjectDetails extends StatelessWidget {
   final Course course;
   final VoidCallback onTap;
   final homeController = Get.find<HomeController>();
+  final courseController = Get.find<CoursesController>();
   @override
+
   Widget build(BuildContext context) {
     final label = GradeHelper.getGradeLabel(
       //course.title!,
@@ -137,9 +140,10 @@ class SubjectDetails extends StatelessWidget {
                                     : false,
                                 activeColor: Colors.green,
                                 onChanged: (value) {
-                                  CoursesHelper.makeCourseInActive(
+                                  courseController.makeCourseInActive(
                                     course.scaid,
                                     value,
+                                    course.cid
                                   );
                                 },
                               )

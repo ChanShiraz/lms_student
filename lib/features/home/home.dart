@@ -8,6 +8,7 @@ import 'package:lms_student/features/courses/view/courses_page.dart';
 import 'package:lms_student/features/grades/view/grades_page.dart';
 import 'package:lms_student/features/home/view/home_page.dart';
 import 'package:lms_student/features/home/widgets/drawer.dart';
+import 'package:lms_student/features/messages/view/messaging_page.dart';
 import 'package:lms_student/features/profile/controller/profile_controller.dart';
 import 'package:lms_student/features/transript/view/transcript_page.dart';
 import 'package:lms_student/utils/app_colors.dart';
@@ -26,7 +27,7 @@ class _HomeState extends State<Home> {
     HomePage(),
     CoursesPage(),
     GradesPage(),
-    TranscriptPage(),
+    MessagingPage(),
   ];
   @override
   void initState() {
@@ -50,8 +51,8 @@ class _HomeState extends State<Home> {
         ],
       ),
       drawer: MyDrawer(),
-      body: IndexedStack(index: selectedIndex,children: pages,),
-     // pages[selectedIndex],
+      body: IndexedStack(index: selectedIndex, children: pages),
+      // pages[selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: selectedIndex,
         onTap: (value) {
@@ -75,10 +76,7 @@ class _HomeState extends State<Home> {
             icon: Icon(Icons.health_and_safety_outlined),
             label: 'Grades',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.note_add),
-            label: 'Transcript',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Messages'),
         ],
       ),
     );

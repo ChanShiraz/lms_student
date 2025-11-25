@@ -53,26 +53,24 @@ class CustomWeekCalendar extends StatelessWidget {
       calendarBuilders: CalendarBuilders(
         markerBuilder: (context, day, events) {
           return Obx(() {
+            int completedCount = 0;
+            int assignedCount = 0;
+            int resubmitCount = 0;
+            int pastDueCount = 0;
             if (homeController.isLoadingJourneys.value) {
               return const SizedBox();
             }
-
             if (homeController.journies.isEmpty) {
               return const SizedBox();
             }
-
             final extractedDates = homeController.journies.map((journey) {
               final DateTime selectedDate =
                   journey.completedDate ?? journey.dueDate;
               return {'date': selectedDate, 'status': journey.status};
             }).toList();
+           
+            
 
-            int completedCount = 0;
-            int assignedCount = 0;
-            int resubmitCount = 0;
-            int pastDueCount = 0;
-
-            // --- Normal per-day counting ---
             for (var date in extractedDates) {
               final d = date['date'] as DateTime;
               if (d.year == day.year &&
@@ -126,59 +124,7 @@ class CustomWeekCalendar extends StatelessWidget {
         },
       ),
 
-      // calendarBuilders: CalendarBuilders(
-      //   markerBuilder: (context, day, events) {
-      //     return Obx(() {
-      //       if (homeController.isLoadingJourneys.value) {
-      //         return SizedBox();
-      //       } else if (!homeController.isLoadingJourneys.value &&
-      //           homeController.journies.isNotEmpty) {
-      //         final extractedDates = homeController.journies.map((journey) {
-      //           final DateTime selectedDate =
-      //               journey.completedDate ?? journey.dueDate;
-      //           return {'date': selectedDate, 'status': journey.status};
-      //         }).toList();
-      //         int completedCount = 0;
-      //         int assignedCount = 0;
-      //         int resubmitCount = 0;
-      //         int pastDueCount = 0;
-
-      //         for (var date in extractedDates) {
-      //           final d = date['date'] as DateTime;
-      //           if (d.year == day.year &&
-      //               d.month == day.month &&
-      //               d.day == day.day) {
-      //             final status = date['status'];
-      //             if (status == null) {
-      //               assignedCount++;
-      //             } else if (status == 1 || status == 0) {
-      //               completedCount++;
-      //             } else if (status == 2) {
-      //               resubmitCount++;
-      //             } else if (status == 3) {
-      //               pastDueCount++;
-      //             }
-      //           }
-      //         }
-
-      //         if (completedCount > 0 ||
-      //             assignedCount > 0 ||
-      //             resubmitCount > 0 ||
-      //             pastDueCount > 0) {
-      //           return _buildBubble(
-      //             completedCount: completedCount,
-      //             assignedCount: assignedCount,
-      //             resubmitCount: resubmitCount,
-      //             pastDueCount: pastDueCount,
-      //           );
-      //         }
-
-      //         return SizedBox();
-      //       }
-      //       return SizedBox();
-      //     });
-      //   },
-      // ),
+     
     );
   }
 
@@ -234,13 +180,3 @@ class CountWidget extends StatelessWidget {
 }
 
 
- // final status = extractedDates.firstWhere((entry) {
-                //   final d = entry['date'] as DateTime;
-                //   return d.year == day.year &&
-                //       d.month == day.month &&
-                //       d.day == day.day;
-                // })['status'];
-                // return Positioned(
-                //   bottom: 0,
-                //   child: _buildBubble(status as int),
-                // );

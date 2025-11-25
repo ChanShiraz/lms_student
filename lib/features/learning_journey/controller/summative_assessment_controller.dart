@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:get/get.dart';
+import 'package:lms_student/features/courses/controllers/courses_controller.dart';
+import 'package:lms_student/features/grades/controller/grades_controller.dart';
 import 'package:lms_student/features/home/controller/home_controller.dart';
 import 'package:lms_student/features/learning_journey/helpers/rubric_helper.dart';
 import 'package:lms_student/features/learning_journey/models/summative_lesson.dart';
@@ -22,6 +24,8 @@ class SummativeAssessmentController extends GetxController {
 
   RxBool fetchingSubSummative = false.obs;
   Rx<SummativeSubmission?> submittedSummative = Rx<SummativeSubmission?>(null);
+
+  final coursesController = Get.find<CoursesController>();
 
   fetchSummativeLesson(int dmodSumId) async {
     fetchingSummativeLesson.value = true;
@@ -150,9 +154,13 @@ class SummativeAssessmentController extends GetxController {
         });
         Get.back();
         Get.back();
+        Get.back();
         Future.delayed(Duration(milliseconds: 300), () {
           Get.rawSnackbar(message: 'Summative submitted successfully.');
         });
+        homeController.fetchJournies();
+        homeController.fetchStudentCourses();
+        coursesController.fetchCourses();
       }
     } catch (e) {
       Get.rawSnackbar(message: 'Error submitting Summative, Please try again!');

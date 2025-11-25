@@ -15,7 +15,7 @@ class MessagingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Messaging'), centerTitle: false),
+      // appBar: AppBar(title: Text('Messaging'), centerTitle: false),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: ListView.builder(

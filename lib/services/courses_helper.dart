@@ -68,18 +68,7 @@ class CoursesHelper {
     return [];
   }
 
-  static makeCourseInActive(int scaid, bool value) async {
-    print('scaid $scaid');
-    try {
-      await supabase
-          .from('student_course_assignment')
-          .update({'active': value ? 1 : 2})
-          .eq('scaid', scaid);
-      print('course inactivated');
-    } catch (e) {
-      print('Error inactivating course $e');
-    }
-  }
+  
 
   static String courseType(int type) {
     switch (type) {

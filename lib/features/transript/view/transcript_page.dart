@@ -110,6 +110,7 @@ class TranscriptPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: Text('Transcript')),
       body: Padding(
         padding: const EdgeInsets.all(10),
         child: Column(

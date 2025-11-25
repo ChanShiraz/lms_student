@@ -9,6 +9,7 @@ import 'package:lms_student/features/courses/view/courses_page.dart';
 import 'package:lms_student/features/messages/view/messaging_page.dart';
 import 'package:lms_student/features/profile/controller/profile_controller.dart';
 import 'package:lms_student/features/profile/view/profile_page.dart';
+import 'package:lms_student/features/transript/view/transcript_page.dart';
 
 class MyDrawer extends StatelessWidget {
   MyDrawer({super.key});
@@ -46,10 +47,10 @@ class MyDrawer extends StatelessWidget {
             ),
 
             ListTile(
-              onTap: () => Get.toNamed(MessagingPage.routeName),
-              leading: Icon(Icons.message, size: 20),
+              onTap: () => Get.toNamed(TranscriptPage.routeName),
+              leading: Icon(Icons.train, size: 20),
               title: Text(
-                'Messages',
+                'Transcript',
                 style: TextStyle(fontWeight: FontWeight.w400, fontSize: 14),
               ),
             ),

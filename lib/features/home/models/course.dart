@@ -22,7 +22,7 @@ class Course {
   final int? courseType;
   final String? teacher;
   final int? active;
-  final int? assignmentActive;
+  int? assignmentActive;
   Course({
     required this.cid,
     required this.scaid,

@@ -30,6 +30,7 @@ class HomeController extends GetxController {
     super.onInit();
   }
 
+  
   Future<int> learningYear() async {
     final response = await supabase
         .from('alt_learning_year')
