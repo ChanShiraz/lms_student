@@ -52,11 +52,9 @@ class Course {
       grade: map['current_grade'] != null
           ? (map['current_grade'] as num).toDouble()
           : null,
-
       simpleGrade: map['simpleGrade'] != null
           ? (map['simpleGrade'] as num).toDouble()
           : null,
-
       graduated: map['graduated'] != null ? map['graduated'] as int : null,
       incomplete: map['incomplete'] != null ? map['incomplete'] as int : null,
       courseType: map['courseType'] != null ? map['courseType'] as int : null,

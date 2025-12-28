@@ -1,5 +1,7 @@
+import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:lms_student/features/home/controller/home_repo.dart';
 import 'package:lms_student/features/home/models/course.dart';
 import 'package:lms_student/features/home/models/journey.dart';
 import 'package:lms_student/services/courses_helper.dart';
@@ -11,8 +13,10 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class HomeController extends GetxController {
   SupabaseClient supabase = Supabase.instance.client;
-  RxBool isLoadingCourses = false.obs;
-  RxBool isLoadingJourneys = true.obs;
+  final homeRepo = HomeRepo();
+  RxBool fetchingCourses = false.obs;
+  final coursesHelper = CoursesHelper();
+
   RxList<Course> courses = <Course>[].obs;
   RxList<Journey> journies = <Journey>[].obs;
   late UserModel userModel;
@@ -30,7 +34,6 @@ class HomeController extends GetxController {
     super.onInit();
   }
 
-  
   Future<int> learningYear() async {
     final response = await supabase
         .from('alt_learning_year')
@@ -40,79 +43,124 @@ class HomeController extends GetxController {
     return response!['alyid'];
   }
 
+  RxString fetchingCoursesError = ''.obs;
   Future<void> fetchStudentCourses() async {
-    courses.clear();
-    isLoadingCourses.value = true;
-    courses.value = await CoursesHelper.fetchStudentCourses(
-      userId: userModel.userId!,
-      learningYear: currentLearningYear,
-    );
-
-    isLoadingCourses.value = false;
+    try {
+      courses.clear();
+      fetchingCourses.value = true;
+      fetchingCoursesError.value = '';
+      courses.value = await CoursesHelper.fetchStudentCourses(
+        userId: userModel.userId!,
+        learningYear: currentLearningYear,
+      );
+    } catch (e) {
+      fetchingCoursesError.value = 'Something went wrong';
+      debugPrint('error loading courses $e');
+    }
+    fetchingCourses.value = false;
   }
 
+  RxBool fetchingJournies = true.obs;
+  RxString fetchingJourniesError = ''.obs;
+
   fetchJournies() async {
-    isLoadingJourneys.value = true;
+    fetchingJournies.value = true;
+    fetchingJourniesError.value = '';
     journies.clear();
     try {
-      final courseIds = await supabase
+      final response = await supabase
           .from('alt_proficiency_path_assignment')
           .select(
-            'a_cid, dmod_sum_id, due_date, completed_date,alt_mod_summatives(image,title), alt_courses(title1,course_type) ',
+            'a_cid, dmod_sum_id, due_date, completed_date,'
+            'alt_mod_summatives(image,title),'
+            'alt_courses(title1,course_type)',
           )
           .eq('userid', userModel.userId!)
           .eq('alt_courses.active', 1)
           .eq('alt_courses.alyid', currentLearningYear)
           .eq('active', 1)
           .order('due_date', ascending: true);
-      for (var element in courseIds) {
-        if (element['alt_courses'] != null) {
-          final status = await supabase
-              .from('summative_student_submissions')
-              .select('grade,status,date,assessed_by,assessed,users(last)')
-              .eq('userid', userModel.userId!)
-              .eq('learning_year', currentLearningYear)
-              .eq('dmod_sum_id', element['dmod_sum_id'])
-              .order('date', ascending: false)
-              .limit(1)
-              .maybeSingle();
-          final dueDate = DateTime.parse(element['due_date']);
-          int? finalStatus;
-          if (status != null && status['status'] != null) {
-            finalStatus = status['status'];
-          } else {
-            if (dueDate.isBefore(DateTime.now())) {
-              finalStatus = 3;
-            } else {
-              finalStatus = null;
-            }
-          }
-          Journey journey = Journey(
-            courseId: element['a_cid'],
-            status: finalStatus,
-            dmodSumId: element['dmod_sum_id'],
-            courseTitle: element['alt_courses']['title1'],
-            imageLink: element['alt_mod_summatives']['image'],
-            title: element['alt_mod_summatives']['title'],
-            dueDate: DateTime.parse(element['due_date']),
-            assessedDate: status?['assessed'] != null
-                ? DateTime.parse(status!['assessed'])
-                : null,
-            assessedBy: status?['assessed_by'] != null
-                ? status!['users']['last']
-                : null,
-            grade: (status?['grade'] as num?)?.toDouble(),
-            track: element['alt_courses']['course_type'],
-          );
-          print('journey grade ${journey.grade}');
-          journies.add(journey);
-        }
+
+      for (final element in response) {
+        if (element['alt_courses'] == null) continue;
+
+        final status = await homeRepo.getStatus(
+          userId: userModel.userId!,
+          learningYear: currentLearningYear,
+          dmodSumId: element['dmod_sum_id'],
+        );
+        // await supabase
+        //     .from('summative_student_submissions')
+        //     .select(
+        //       'grade,status,date,assessed_by,assessed,'
+        //       'users!summative_student_submissions_userid_fkey(last)',
+        //     )
+        //     .eq('userid', userModel.userId!)
+        //     .eq('learning_year', currentLearningYear)
+        //     .eq('dmod_sum_id', element['dmod_sum_id'])
+        //     .order('date', ascending: false)
+        //     .limit(1)
+        //     .maybeSingle();
+
+        final journey = Journey.fromMap(
+          element: element,
+          status: status,
+          now: DateTime.now(),
+        );
+
+        journies.add(journey);
       }
     } catch (e) {
-      print('Error jorneyes $e');
+      fetchingJourniesError.value = 'Something went wrong!';
+      debugPrint('Error journeys $e');
     }
-    // journies.value = journies.reversed.toList();
-    isLoadingJourneys.value = false;
+    fetchingJournies.value = false;
+  }
+
+  Future<void> updateJourney({
+    required int dmodSumId,
+    required int aCid,
+  }) async {
+    try {
+      final element = await supabase
+          .from('alt_proficiency_path_assignment')
+          .select(
+            'a_cid, dmod_sum_id, due_date, completed_date,'
+            'alt_mod_summatives(image,title),'
+            'alt_courses(title1,course_type)',
+          )
+          .eq('userid', userModel.userId!)
+          .eq('a_cid', aCid)
+          .eq('dmod_sum_id', dmodSumId)
+          .eq('alt_courses.active', 1)
+          .eq('alt_courses.alyid', currentLearningYear)
+          .eq('active', 1)
+          .maybeSingle();
+      if (element == null || element['alt_courses'] == null) return;
+      final status = await homeRepo.getStatus(
+        userId: userModel.userId!,
+        dmodSumId: dmodSumId,
+        learningYear: currentLearningYear,
+      );
+      final updatedJourney = Journey.fromMap(
+        element: element,
+        status: status,
+        now: DateTime.now(),
+      );
+
+      final index = journies.indexWhere(
+        (j) => j.dmodSumId == dmodSumId && j.courseId == aCid,
+      );
+
+      if (index != -1) {
+        journies[index] = updatedJourney;
+        journies.refresh();
+      } else {
+        journies.add(updatedJourney);
+      }
+    } catch (e) {
+      debugPrint('Error updating journey $e');
+    }
   }
 
   Future<double> calculateLp() async {

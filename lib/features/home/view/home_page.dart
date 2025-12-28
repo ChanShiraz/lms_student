@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/route_manager.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:lms_student/common/round_container.dart';
+import 'package:lms_student/common/topbar.dart';
 import 'package:lms_student/features/auth/view/login_page.dart';
 import 'package:lms_student/features/home/controller/home_controller.dart';
 import 'package:lms_student/features/home/home.dart';
@@ -36,229 +38,319 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // appBar: TopBar(title: 'DPNG', centerTitle: true, showBack: false),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5),
-                child: Text(
-                  'Current Learning Period Work',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                ),
-              ),
-              Obx(
-                () => controller.isLoadingCourses.value
-                    ? SizedBox()
-                    : FutureBuilder<double>(
-                        future: controller.calculateLp(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return SizedBox();
-                          }
-                          if (snapshot.hasError) {
-                            return SizedBox();
-                          }
-                          double finalLp = snapshot.data ?? 0;
-                          double progressValue = (finalLp / 100).clamp(
-                            0.0,
-                            1.0,
-                          );
-
-                          Color progressColor;
-                          if (finalLp <= 25) {
-                            progressColor = const Color(0xFFDC2626);
-                          } else if (finalLp <= 50) {
-                            progressColor = const Color(0xFFF59E0B);
-                          } else if (finalLp <= 75) {
-                            progressColor = const Color(0xFF60A5FA);
-                          } else if (finalLp <= 89) {
-                            progressColor = const Color(0xFF2563EB);
-                          } else {
-                            progressColor = const Color(0xFF16A34A);
-                          }
-
-                          return Row(
-                            children: [
-                              Expanded(
-                                child: LinearProgressIndicator(
-                                  borderRadius: BorderRadius.circular(20),
-                                  minHeight: 18,
-                                  value: progressValue,
-                                  color: progressColor,
-                                  backgroundColor: Colors.grey[300],
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Text(
-                                '${finalLp.toStringAsFixed(0)}%',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-              ),
-
-              SizedBox(height: 15),
-              Container(
-                width: double.infinity,
-                color: AppColors.primaryColor,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 5,
-                    horizontal: 5,
-                  ),
-                  child: Text(
-                    'Calendar Week',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              ),
-              Obx(
-                () => CustomWeekCalendar(
-                  homeController: controller,
-                  currentDayColor: controller.isLoadingJourneys.value
-                      ? Colors.grey
-                      : overallIconColor(controller.journies),
-                ),
-              ),
-              SizedBox(height: 30),
-              Row(
-                children: [
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Text(
-                          'LEARNING JOURNEYS',
-                          style: TextStyle(fontWeight: FontWeight.w600),
+        child: RefreshIndicator(
+          onRefresh: () {
+            controller.fetchingCourses();
+            return controller.fetchJournies();
+          },
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SizedBox(height: 10),
+                RoundContainer(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5),
+                        child: Text(
+                          'Current Learning Period Work',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                        Obx(() {
-                          print(
-                            'controller loading ${controller.isLoadingJourneys.value}',
-                          );
-                          return controller.isLoadingJourneys.value
-                              ? SizedBox()
-                              : IconButton(
-                                  onPressed: () {
-                                    final selected = selectJourney(
-                                      controller.journies,
-                                    );
-                                    if (selected != null) {
-                                      Get.to(
-                                        () => JourneyPage(journey: selected),
-                                      );
-                                    } else {
+                      ),
+                      Obx(
+                        () => controller.fetchingCourses.value
+                            ? SizedBox()
+                            : FutureBuilder<double>(
+                                future: controller.calculateLp(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return SizedBox();
+                                  }
+                                  if (snapshot.hasError) {
+                                    return SizedBox();
+                                  }
+                                  double finalLp = snapshot.data ?? 0;
+                                  double progressValue = (finalLp / 100).clamp(
+                                    0.0,
+                                    1.0,
+                                  );
+
+                                  Color progressColor;
+                                  if (finalLp <= 25) {
+                                    progressColor = const Color(0xFFDC2626);
+                                  } else if (finalLp <= 50) {
+                                    progressColor = const Color(0xFFF59E0B);
+                                  } else if (finalLp <= 75) {
+                                    progressColor = const Color(0xFF60A5FA);
+                                  } else if (finalLp <= 89) {
+                                    progressColor = const Color(0xFF2563EB);
+                                  } else {
+                                    progressColor = const Color(0xFF16A34A);
+                                  }
+
+                                  return Row(
+                                    children: [
+                                      Expanded(
+                                        child: LinearProgressIndicator(
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
+                                          minHeight: 18,
+                                          value: progressValue,
+                                          color: progressColor,
+                                          backgroundColor: Colors.grey[300],
+                                        ),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Text(
+                                        '${finalLp.toStringAsFixed(0)}%',
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ),
+                      ),
+
+                      SizedBox(height: 15),
+                      Container(
+                        width: double.infinity,
+                        color: AppColors.primaryColor,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 5,
+                            horizontal: 5,
+                          ),
+                          child: Text(
+                            'Calendar Week',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
+                      Obx(
+                        () => CustomWeekCalendar(
+                          homeController: controller,
+                          currentDayColor: controller.fetchingJournies.value
+                              ? Colors.grey
+                              : overallIconColor(controller.journies),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 20),
+                RoundContainer(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Text(
+                                  'LEARNING JOURNEYS',
+                                  style: TextStyle(fontWeight: FontWeight.w600),
+                                ),
+                                Obx(() {
+                                  print(
+                                    'controller loading ${controller.fetchingJournies.value}',
+                                  );
+
+                                  return controller.fetchingJournies.value
+                                      ? SizedBox()
+                                      : IconButton(
+                                          onPressed: () {
+                                            final selected = selectJourney(
+                                              controller.journies,
+                                            );
+                                            if (selected != null) {
+                                              Get.to(
+                                                () => JourneyPage(
+                                                  journey: selected,
+                                                ),
+                                              );
+                                            } else {
+                                              Get.toNamed(
+                                                AllJourneyesPage.routeName,
+                                                arguments: controller.journies,
+                                              );
+                                            }
+                                          },
+                                          icon: Icon(
+                                            Icons.assistant_navigation,
+                                            color: overallIconColor(
+                                              controller.journies,
+                                            ),
+                                          ),
+                                        );
+                                }),
+                              ],
+                            ),
+                          ),
+                          Obx(
+                            () =>
+                                controller.fetchingJournies.value ||
+                                    controller.fetchingJourniesError.isNotEmpty
+                                ? SizedBox()
+                                : TextButton(
+                                    onPressed: () {
                                       Get.toNamed(
                                         AllJourneyesPage.routeName,
                                         arguments: controller.journies,
                                       );
-                                    }
-                                  },
-                                  icon: Icon(
-                                    Icons.assistant_navigation,
-                                    color: overallIconColor(
-                                      controller.journies,
-                                    ),
+                                    },
+                                    child: Text('View All'),
                                   ),
-                                );
-                        }),
-                      ],
-                    ),
-                  ),
-
-                  Obx(
-                    () => controller.isLoadingJourneys.value
-                        ? SizedBox()
-                        : TextButton(
-                            onPressed: () {
-                              Get.toNamed(
-                                AllJourneyesPage.routeName,
-                                arguments: controller.journies,
-                              );
-                            },
-                            child: Text('View All'),
                           ),
-                  ),
-                ],
-              ),
-              Obx(
-                () => controller.isLoadingJourneys.value
-                    ? SizedBox(
-                        height: 100,
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: 5,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, index) =>
-                              JourneyWidgetShimmer(),
-                        ),
-                      )
-                    : SizedBox(
-                        height: 100,
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: controller.journies.length,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, index) => JourneyWidget(
-                            journey: controller.journies[index],
-                            onTap: () => Get.toNamed(
-                              JourneyPage.routeName,
-                              arguments: controller.journies[index],
+                        ],
+                      ),
+                      Obx(() {
+                        if (controller.fetchingJournies.value) {
+                          return SizedBox(
+                            height: 100,
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: 5,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (context, index) =>
+                                  JourneyWidgetShimmer(),
+                            ),
+                          );
+                        }
+                        if (controller.fetchingJourniesError.isNotEmpty) {
+                          return Center(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 15),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  IconButton(
+                                    onPressed: () {
+                                      controller.fetchJournies();
+                                    },
+                                    icon: Icon(Icons.refresh_outlined),
+                                  ),
+                                  Text(
+                                    'Something went wrong! please try again',
+                                  ),
+                                  SizedBox(height: 20),
+                                ],
+                              ),
+                            ),
+                          );
+                        }
+                        return SizedBox(
+                          height: 100,
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: controller.journies.length,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, index) => JourneyWidget(
+                              journey: controller.journies[index],
+                              onTap: () => Get.toNamed(
+                                JourneyPage.routeName,
+                                arguments: controller.journies[index],
+                              ),
                             ),
                           ),
-                        ),
+                        );
+                      }),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 20),
+                RoundContainer(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'COURSES',
+                        style: TextStyle(fontWeight: FontWeight.w600),
                       ),
-              ),
-              Text('COURSES', style: TextStyle(fontWeight: FontWeight.w600)),
-              SizedBox(height: 5),
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  double desiredTileWidth = 200;
-                  int crossAxisCount = (constraints.maxWidth / desiredTileWidth)
-                      .floor();
-                  if (crossAxisCount < 2) crossAxisCount = 2;
+                      SizedBox(height: 10),
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          double desiredTileWidth = 200;
+                          int crossAxisCount =
+                              (constraints.maxWidth / desiredTileWidth).floor();
+                          if (crossAxisCount < 2) crossAxisCount = 2;
 
-                  return Obx(() {
-                    return controller.isLoadingCourses.value
-                        ? GridView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: 4,
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: crossAxisCount,
-                                  crossAxisSpacing: 16,
-                                  mainAxisSpacing: 16,
-                                  childAspectRatio: 1,
+                          return Obx(() {
+                            if (controller.fetchingCourses.value) {
+                              return GridView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: 4,
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: crossAxisCount,
+                                      crossAxisSpacing: 16,
+                                      mainAxisSpacing: 16,
+                                      childAspectRatio: 1,
+                                    ),
+                                itemBuilder: (context, index) =>
+                                    const CourseShimmer(),
+                              );
+                            }
+                            if (controller
+                                .fetchingCoursesError
+                                .value
+                                .isNotEmpty) {
+                              return Center(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    IconButton(
+                                      onPressed: () {
+                                        controller.fetchStudentCourses();
+                                      },
+                                      icon: Icon(Icons.refresh_outlined),
+                                    ),
+                                    Text(
+                                      'Something went wrong! please try again',
+                                    ),
+                                    SizedBox(height: 20),
+                                  ],
                                 ),
-                            itemBuilder: (context, index) =>
-                                const CourseShimmer(),
-                          )
-                        : GridView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: controller.courses.length,
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: crossAxisCount,
-                                  crossAxisSpacing: 16,
-                                  mainAxisSpacing: 16,
-                                  childAspectRatio: 1,
-                                ),
-                            itemBuilder: (context, index) =>
-                                CourseWidget(course: controller.courses[index]),
-                          );
-                  });
-                },
-              ),
-            ],
+                              );
+                            }
+
+                            return GridView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: controller.courses.length,
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: crossAxisCount,
+                                    crossAxisSpacing: 16,
+                                    mainAxisSpacing: 16,
+                                    childAspectRatio: 1,
+                                  ),
+                              itemBuilder: (context, index) => CourseWidget(
+                                course: controller.courses[index],
+                              ),
+                            );
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

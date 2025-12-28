@@ -9,6 +9,7 @@ import 'package:lms_student/services/courses_helper.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class CoursesController extends GetxController {
+  
   RxBool loadingCourses = false.obs;
   RxList<Course> courses = <Course>[].obs;
   final homeController = Get.find<HomeController>();

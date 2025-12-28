@@ -74,6 +74,7 @@ class SaLinkPage extends StatelessWidget {
                             journey.track,
                             journey.courseId,
                             2,
+                            journey.accessorId,
                           );
                         }
                       },

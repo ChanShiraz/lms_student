@@ -24,11 +24,13 @@ class FormativeAssessmentController extends GetxController {
     try {
       final response = await supabase
           .from('formative_student_submissions')
-          .select('*,users(first)')
+          .select('*,users!formative_student_submissions_userid_fkey(first)')
           .eq('dmod_form_id', formId)
           .eq('userid', homeController.userModel.userId!)
-          .single();
-      formative.value = FormativeSubmission.fromMap(response);
+          .maybeSingle();
+      if (response != null) {
+        formative.value = FormativeSubmission.fromMap(response);
+      }
     } catch (e) {
       print('Error fetching formative $e');
     }
@@ -40,7 +42,7 @@ class FormativeAssessmentController extends GetxController {
     int courseId,
     int lessonId,
     int type,
-    LessonFormative formative,
+    LessonFormative lessonFormative,
   ) async {
     submittingFormative.value = true;
     final userId = homeController.userModel.userId!;
@@ -52,16 +54,16 @@ class FormativeAssessmentController extends GetxController {
           .from('formative_student_submissions')
           .select()
           .eq('userid', userId)
-          .eq('dmod_form_id', formative.formId)
+          .eq('dmod_form_id', lessonFormative.formId)
           .maybeSingle();
 
       if (existing == null) {
         await supabase.from('formative_student_submissions').insert({
-          'dmod_form_id': formative.formId,
+          'dmod_form_id': lessonFormative.formId,
           'userid': userId,
-          'assessed_by': 1,
-          'title': formative.title,
-          'description': formative.description,
+          'assessed_by': formative.value!.assessed_by,
+          'title': lessonFormative.title,
+          'description': lessonFormative.description,
           'date': now,
           'status': 0,
           'type': type,
@@ -100,14 +102,16 @@ class FormativeAssessmentController extends GetxController {
               'date': now,
               'type': type,
               'path_link': pathLink,
-              'assessed_by': 1,
+              'assessed_by': formative.value!.assessed_by,
               'status': 0,
               'comment': null,
               'assessed': null,
               'resub_status': 0,
               'student_viewed': 0,
               'page': '0',
-              'text': jsonEncode(quillController.document.toDelta().toJson()),
+              'text': type == 4
+                  ? jsonEncode(quillController.document.toDelta().toJson())
+                  : null,
             })
             .eq('fsubid', fsubid);
         Get.back();
