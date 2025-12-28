@@ -17,6 +17,7 @@ class FormativeSubmission {
   final int track;
   final int resubStatus;
   final int studentViewed;
+  final int assessed_by;
   String? text;
   String? comment;
   String? assessBy;
@@ -39,6 +40,7 @@ class FormativeSubmission {
     required this.track,
     required this.resubStatus,
     required this.studentViewed,
+    required this.assessed_by,
     this.assessed,
     this.text,
     this.comment,
@@ -50,6 +52,7 @@ class FormativeSubmission {
     return FormativeSubmission(
       fsubid: map['fsubid'] as int,
       dmodFormId: map['dmod_form_id'] as int,
+      assessed_by: map['assessed_by'] as int,
       userid: map['userid'] as int,
       assessedBy: map['assessed_by'] as int,
       title: map['title'] ?? '',

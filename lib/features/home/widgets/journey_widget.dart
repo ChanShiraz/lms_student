@@ -18,13 +18,15 @@ class JourneyWidget extends StatelessWidget {
         onTap: onTap,
         child: Column(
           children: [
-            journey.imageLink != null
-                ? Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black12),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: ClipRRect(
+            Container(
+              height: 40,
+              width: 40,
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.black12),
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: journey.imageLink != null
+                  ? ClipRRect(
                       borderRadius: BorderRadius.circular(5),
                       child: CachedNetworkImage(
                         fit: BoxFit.cover,
@@ -34,9 +36,10 @@ class JourneyWidget extends StatelessWidget {
                         errorWidget: (context, url, error) =>
                             Icon(Icons.broken_image),
                       ),
-                    ),
-                  )
-                : SizedBox(),
+                    )
+                  : SizedBox(),
+            ),
+
             SizedBox(height: 5),
             Text(
               journey.courseTitle,

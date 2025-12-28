@@ -64,6 +64,8 @@ class CoursesHelper {
       return courses;
     } catch (e) {
       print('error $e');
+      //throw();
+      
     }
     return [];
   }

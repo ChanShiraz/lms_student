@@ -5,6 +5,7 @@ import 'package:lms_student/services/courses_helper.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class GradesController extends GetxController {
+  final coursesHelper = CoursesHelper();
   SupabaseClient supabase = Supabase.instance.client;
   RxList<Course> courses = <Course>[].obs;
   final homeController = Get.find<HomeController>();

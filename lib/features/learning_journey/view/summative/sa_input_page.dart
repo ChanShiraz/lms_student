@@ -75,30 +75,31 @@ class SaInputPage extends StatelessWidget {
                     final plainText = controller.quillController.document
                         .toPlainText()
                         .trim();
-
                     if (plainText.isNotEmpty) {
-                      // controller.submitFormative(
-                      //   journey.track,
-                      //   journey.courseId,
-                      //   lesson.lessonId,
-                      //   4,
-                      // );
+                      controller.submitSummative(
+                        journey.dmodSumId,
+                        journey.track,
+                        journey.courseId,
+                        4,
+                        journey.accessorId,
+                      );
                     } else {
                       Get.rawSnackbar(message: 'Please enter text!');
                     }
                   },
                   style: ElevatedButton.styleFrom(minimumSize: Size(200, 40)),
-                  child: Text('Submit'),
-                  // Obx(
-                  //   () => controller.submittingFormative.value
-                  //       ? Transform.scale(
-                  //           scale: 0.8,
-                  //           child: CircularProgressIndicator(
-                  //             color: Colors.white,
-                  //           ),
-                  //         )
-                  //       : Text('Submit'),
-                  // ),
+                  child: 
+                  //Text('Submit'),
+                  Obx(
+                    () => controller.submittingSummative.value
+                        ? Transform.scale(
+                            scale: 0.8,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                          )
+                        : Text('Submit'),
+                  ),
                 ),
               ),
             ],

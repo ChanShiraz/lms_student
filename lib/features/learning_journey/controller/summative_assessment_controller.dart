@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:lms_student/features/courses/controllers/courses_controller.dart';
 import 'package:lms_student/features/grades/controller/grades_controller.dart';
 import 'package:lms_student/features/home/controller/home_controller.dart';
+import 'package:lms_student/features/home/view/home_page.dart';
 import 'package:lms_student/features/learning_journey/helpers/rubric_helper.dart';
 import 'package:lms_student/features/learning_journey/models/summative_lesson.dart';
 import 'package:lms_student/features/learning_journey/models/summative_submission.dart';
@@ -78,6 +79,7 @@ class SummativeAssessmentController extends GetxController {
     int courseTrack,
     int courseId,
     int type,
+    final int? accessorId,
   ) async {
     submittingSummative.value = true;
     final userId = homeController.userModel.userId!;
@@ -107,8 +109,8 @@ class SummativeAssessmentController extends GetxController {
               'dmod_sum_id': dmodSumId,
               'date': now,
               'type': type,
-              'path_link': pathLink,
-              'assessed_by': 1,
+              'path_link': type == 2 ? pathLink : null,
+              // 'assessed_by': 1,
               'status': 0,
               'grade': 0,
               'resubmit': 0,
@@ -122,11 +124,14 @@ class SummativeAssessmentController extends GetxController {
             })
             .eq('subid', subid);
 
-        Get.back();
-        Get.back();
+        Get.offAll(HomePage());
         Future.delayed(Duration(milliseconds: 300), () {
           Get.rawSnackbar(message: 'Summative resubmitted successfully.');
         });
+        homeController.updateJourney(dmodSumId: dmodSumId, aCid: courseId);
+        //homeController.fetchJournies();
+        homeController.fetchStudentCourses();
+        coursesController.fetchCourses();
       } else {
         await supabase.from('summative_student_submissions').insert({
           'userid': homeController.userModel.userId,
@@ -139,7 +144,7 @@ class SummativeAssessmentController extends GetxController {
           'date': now,
           'type': type,
           'path_link': pathLink,
-          'assessed_by': 1,
+          'assessed_by': accessorId,
           'status': 0,
           'weight': 1,
           'grade': 0,
@@ -152,13 +157,15 @@ class SummativeAssessmentController extends GetxController {
               ? jsonEncode(quillController.document.toDelta().toJson())
               : null,
         });
-        Get.back();
-        Get.back();
-        Get.back();
+        // Get.back();
+        // Get.back();
+        // Get.back();
+        Get.offAll(HomePage());
         Future.delayed(Duration(milliseconds: 300), () {
           Get.rawSnackbar(message: 'Summative submitted successfully.');
         });
-        homeController.fetchJournies();
+        //homeController.fetchJournies();
+         homeController.updateJourney(dmodSumId: dmodSumId, aCid: courseId);
         homeController.fetchStudentCourses();
         coursesController.fetchCourses();
       }

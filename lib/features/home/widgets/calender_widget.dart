@@ -57,7 +57,7 @@ class CustomWeekCalendar extends StatelessWidget {
             int assignedCount = 0;
             int resubmitCount = 0;
             int pastDueCount = 0;
-            if (homeController.isLoadingJourneys.value) {
+            if (homeController.fetchingJournies.value) {
               return const SizedBox();
             }
             if (homeController.journies.isEmpty) {
@@ -68,8 +68,6 @@ class CustomWeekCalendar extends StatelessWidget {
                   journey.completedDate ?? journey.dueDate;
               return {'date': selectedDate, 'status': journey.status};
             }).toList();
-           
-            
 
             for (var date in extractedDates) {
               final d = date['date'] as DateTime;
@@ -123,8 +121,6 @@ class CustomWeekCalendar extends StatelessWidget {
           });
         },
       ),
-
-     
     );
   }
 
@@ -178,5 +174,3 @@ class CountWidget extends StatelessWidget {
     );
   }
 }
-
-
