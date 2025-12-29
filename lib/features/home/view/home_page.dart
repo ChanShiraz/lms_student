@@ -42,11 +42,13 @@ class _HomePageState extends State<HomePage> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15),
         child: RefreshIndicator(
-          onRefresh: () {
-            controller.fetchingCourses();
-            return controller.fetchJournies();
+          onRefresh: () async {
+            controller.fetchJournies();
+            controller.fetchStudentCourses();
+            //return controller.fetchJournies();
           },
           child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,

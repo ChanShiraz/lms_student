@@ -1,7 +1,7 @@
 class Journey {
   int courseId;
   int dmodSumId;
-  final int? accessorId;
+  final int accessorId;
   String courseTitle;
   String title;
   String? imageLink;
@@ -57,7 +57,7 @@ class Journey {
       assessedBy: status?['assessed_by'] != null
           ? (status!['users']?['last'])
           : null,
-      accessorId: status?['assessed_by'],
+      accessorId: element['alt_courses']['userid_assigned'],
       grade: (status?['grade'] as num?)?.toDouble(),
       status: finalStatus,
       track: element['alt_courses']['course_type'],

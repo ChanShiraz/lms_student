@@ -63,7 +63,7 @@ class HomeController extends GetxController {
   RxBool fetchingJournies = true.obs;
   RxString fetchingJourniesError = ''.obs;
 
-  fetchJournies() async {
+  Future<void> fetchJournies() async {
     fetchingJournies.value = true;
     fetchingJourniesError.value = '';
     journies.clear();
@@ -73,7 +73,7 @@ class HomeController extends GetxController {
           .select(
             'a_cid, dmod_sum_id, due_date, completed_date,'
             'alt_mod_summatives(image,title),'
-            'alt_courses(title1,course_type)',
+            'alt_courses(title1,course_type,userid_assigned)',
           )
           .eq('userid', userModel.userId!)
           .eq('alt_courses.active', 1)
