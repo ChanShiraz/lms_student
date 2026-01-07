@@ -167,7 +167,7 @@ class _HomePageState extends State<HomePage> {
                                   style: TextStyle(fontWeight: FontWeight.w600),
                                 ),
                                 Obx(() {
-                                  print(
+                                  debugPrint(
                                     'controller loading ${controller.fetchingJournies.value}',
                                   );
 

@@ -22,7 +22,7 @@ class _SummativePageState extends State<SummativePage> {
   @override
   void initState() {
     controller = Get.put(SummativeController(course: widget.course));
-    controller.fetchSummatives();
+    controller.fetchJournies(widget.course.cid);
     super.initState();
   }
 
@@ -71,7 +71,7 @@ class _SummativePageState extends State<SummativePage> {
             ),
           ),
           Obx(
-            () => controller.isLoadingSummative.value
+            () => controller.fetchingJournies.value
                 ? Expanded(
                     child: ListView.builder(
                       itemCount: 5,
@@ -80,9 +80,9 @@ class _SummativePageState extends State<SummativePage> {
                   )
                 : Expanded(
                     child: ListView.builder(
-                      itemCount: controller.summatives.length,
+                      itemCount: controller.journies.length,
                       itemBuilder: (context, index) => SummativeWidget(
-                        summative: controller.summatives[index],
+                        summative: controller.journies[index],
                       ),
                     ),
                   ),

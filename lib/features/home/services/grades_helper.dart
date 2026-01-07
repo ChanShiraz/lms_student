@@ -280,7 +280,6 @@ class GradeHelper {
       currentLearningYear: currentLearningYear,
       courseType: couresType,
     );
-    
 
     final assignedCount = await countAssignedSummatives(
       supabase: supabase,

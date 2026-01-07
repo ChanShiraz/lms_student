@@ -9,7 +9,6 @@ import 'package:lms_student/services/courses_helper.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class CoursesController extends GetxController {
-  
   RxBool loadingCourses = false.obs;
   RxList<Course> courses = <Course>[].obs;
   final homeController = Get.find<HomeController>();
@@ -27,6 +26,7 @@ class CoursesController extends GetxController {
   }
 
   makeCourseInActive(int scaid, bool value, int acid) async {
+    print('course id $acid');
     try {
       await supabase
           .from('student_course_assignment')
@@ -45,7 +45,9 @@ class CoursesController extends GetxController {
         increaseSummativeDate(acid);
       }
       courses.refresh();
+      homeController.fetchJournies();
       homeController.fetchStudentCourses();
+
       gradesController.getGrades();
     } catch (e) {
       print('Error inactivating course $e');

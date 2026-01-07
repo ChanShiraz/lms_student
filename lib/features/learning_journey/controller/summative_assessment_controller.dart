@@ -9,6 +9,8 @@ import 'package:lms_student/features/home/controller/home_controller.dart';
 import 'package:lms_student/features/home/home.dart';
 import 'package:lms_student/features/home/view/home_page.dart';
 import 'package:lms_student/features/learning_journey/helpers/rubric_helper.dart';
+import 'package:lms_student/features/learning_journey/models/approved_material.dart';
+import 'package:lms_student/features/learning_journey/models/resource.dart';
 import 'package:lms_student/features/learning_journey/models/summative_lesson.dart';
 import 'package:lms_student/features/learning_journey/models/summative_submission.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -64,13 +66,15 @@ class SummativeAssessmentController extends GetxController {
     try {
       final response = await supabase
           .from('summative_student_submissions')
-          .select('*,users(first)')
+          .select(
+            '*,users!summative_student_submissions_assessed_by_fkey(first)',
+          )
           .eq('dmod_sum_id', dmodSumId)
           .eq('userid', homeController.userModel.userId!)
           .single();
       submittedSummative.value = SummativeSubmission.fromJson(response);
     } catch (e) {
-      print('Error fetching formative $e');
+      print('Error fetching summatives $e');
     }
     fetchingSubSummative.value = false;
   }
@@ -248,6 +252,48 @@ class SummativeAssessmentController extends GetxController {
       print('Copied and deleted summative_pid rows for subid $subid');
     } catch (e) {
       print('Error copying/deleting summative_pid: $e');
+    }
+  }
+
+  List<Resource> resources = <Resource>[];
+  RxBool fetchingResources = false.obs;
+  RxString fetchingResError = ''.obs;
+
+  void fetchResources(int dumSumId) async {
+    fetchingResources.value = true;
+    fetchingResError.value = '';
+    try {
+      final response = await supabase
+          .from('alt_mod_summative_resources')
+          .select()
+          .eq('dmod_sum_id', dumSumId);
+      resources = response.map((e) => Resource.fromMap(e)).toList();
+      await fetchApprovedMat(dumSumId);
+    } catch (e) {
+      debugPrint('error fetching resources $e');
+      fetchingResError.value = e.toString();
+    } finally {
+      fetchingResources.value = false;
+    }
+  }
+
+  List<ApprovedMaterial> approveMat = <ApprovedMaterial>[];
+  Future<void> fetchApprovedMat(int dumSumId) async {
+    //fetchingResources.value = true;
+    fetchingResError.value = '';
+    try {
+      final response = await supabase
+          .from('alt_mod_summative_acr')
+          .select('*,academic_content_resources(*)')
+          .eq('dmod_sum_id', dumSumId);
+      approveMat = response
+          .map((e) => ApprovedMaterial.fromMapUpdate(e))
+          .toList();
+    } catch (e) {
+      debugPrint('error fetching approved res $e');
+      fetchingResError.value = e.toString();
+    } finally {
+      //fetchingResources.value = false;
     }
   }
 }

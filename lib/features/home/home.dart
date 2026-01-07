@@ -10,6 +10,7 @@ import 'package:lms_student/features/home/view/home_page.dart';
 import 'package:lms_student/features/home/widgets/drawer.dart';
 import 'package:lms_student/features/messages/view/messaging_page.dart';
 import 'package:lms_student/features/profile/controller/profile_controller.dart';
+import 'package:lms_student/features/profile/view/profile_page.dart';
 import 'package:lms_student/features/transript/view/transcript_page.dart';
 import 'package:lms_student/utils/app_colors.dart';
 
@@ -47,7 +48,12 @@ class _HomeState extends State<Home> {
             onPressed: () {},
             icon: Icon(Icons.notifications_outlined),
           ),
-          IconButton(onPressed: () {}, icon: Icon(Icons.settings_outlined)),
+          IconButton(
+            onPressed: () {
+              Get.to(ProfilePage());
+            },
+            icon: Icon(Icons.settings_outlined),
+          ),
         ],
       ),
       drawer: MyDrawer(),

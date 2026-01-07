@@ -15,7 +15,9 @@ import 'package:lms_student/features/learning_journey/view/quill_page.dart';
 import 'package:lms_student/features/learning_journey/view/summative/sa_input_page.dart';
 import 'package:lms_student/features/learning_journey/view/summative/sa_link_page.dart';
 import 'package:lms_student/features/learning_journey/view/summative/widgets/competency_widget.dart';
+import 'package:lms_student/features/learning_journey/view/summative/widgets/materials_widget.dart';
 import 'package:lms_student/features/learning_journey/view/summative/widgets/non_science_standard.dart';
+import 'package:lms_student/features/learning_journey/view/summative/widgets/resources_widget.dart';
 import 'package:lms_student/features/learning_journey/view/summative/widgets/rubric_widget.dart';
 import 'package:lms_student/features/learning_journey/view/summative/widgets/science_standard_widget.dart';
 
@@ -39,13 +41,14 @@ class _SummativeAssessmentPageState extends State<SummativeAssessmentPage>
     {'label': 'Capable', 'color': Colors.lightBlue, 'dplvlid': 3},
     {'label': 'BRIDGING', 'color': Colors.purple, 'dplvlid': 4},
     {'label': 'PROFICIENT', 'color': Colors.blue, 'dplvlid': 5},
-    {'label': 'METACOGNITIVE', 'color': Colors.green, 'dplvlid': 6},
+    {'label': 'METACOGNITION', 'color': Colors.green, 'dplvlid': 6},
   ];
   @override
   void initState() {
     _tabController = TabController(length: levels.length, vsync: this);
     controller.fetchSubmittedSummative(widget.journey.dmodSumId);
     controller.fetchSummativeLesson(widget.journey.dmodSumId);
+    controller.fetchResources(widget.journey.dmodSumId);
     super.initState();
   }
 
@@ -93,7 +96,6 @@ class _SummativeAssessmentPageState extends State<SummativeAssessmentPage>
                           ),
                         ),
                       ),
-
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         child: Divider(),
@@ -118,9 +120,6 @@ class _SummativeAssessmentPageState extends State<SummativeAssessmentPage>
                                 Text(
                                   'Scaffolding Rubric : ',
                                   style: TextStyle(fontWeight: FontWeight.w500),
-                                ),
-                                Text(
-                                  '${controller.summativeLesson.value!.proficientRubric}',
                                 ),
                                 TabBar(
                                   isScrollable: true,
@@ -159,12 +158,18 @@ class _SummativeAssessmentPageState extends State<SummativeAssessmentPage>
                       SizedBox(height: 20),
                       Text(
                         'Summative Resources:',
-                        style: TextStyle(fontWeight: FontWeight.w500),
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 18,
+                        ),
                       ),
+
                       SizedBox(height: 10),
-                      ResourcesWidget(title: 'Approved Instructional Material'),
-                      ResourcesWidget(title: 'Summative Instruction Video'),
-                      ResourcesWidget(title: 'Cell Summative'),
+                      ApprovedMaterialList(controller: controller),
+                      ResourcesList(
+                        controller: controller,
+                        dumSumId: widget.journey.dmodSumId,
+                      ),
                       SizedBox(height: 30),
                       Obx(
                         () => controller.fetchingSubSummative.value
@@ -335,11 +340,7 @@ class SubmittedWidget extends StatelessWidget {
                   elevation: 0.5,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Expanded(
-                      child: Text(
-                        controller.submittedSummative.value!.comment!,
-                      ),
-                    ),
+                    child: Text(controller.submittedSummative.value!.comment!),
                   ),
                 ),
               )
@@ -381,23 +382,6 @@ class SubmittedWidget extends StatelessWidget {
                 ],
               )
             : SizedBox(),
-      ],
-    );
-  }
-}
-
-class ResourcesWidget extends StatelessWidget {
-  const ResourcesWidget({super.key, required this.title});
-  final String title;
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 7),
-          child: CircleAvatar(radius: 2, backgroundColor: Colors.black),
-        ),
-        Text(title, style: TextStyle(color: Colors.blue)),
       ],
     );
   }

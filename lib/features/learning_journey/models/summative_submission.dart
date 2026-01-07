@@ -23,6 +23,12 @@ class SummativeSubmission {
   final String? comment;
   final String? assessBy;
 
+  // final String? emergingRubric;
+  // final String? capableRubric;
+  // final String? bridgingRubric;
+  // final String? proficientRubric;
+  // final String? metacognition;
+
   SummativeSubmission({
     required this.subid,
     required this.dmodFormId,
@@ -45,6 +51,11 @@ class SummativeSubmission {
     this.text,
     this.comment,
     this.assessBy,
+    // this.emergingRubric,
+    // this.capableRubric,
+    // this.bridgingRubric,
+    // this.proficientRubric,
+    // this.metacognition,
   });
 
   factory SummativeSubmission.fromJson(Map<String, dynamic> json) {
@@ -72,6 +83,11 @@ class SummativeSubmission {
       text: json['text'],
       comment: json['comment'],
       assessBy: json['users']['first'],
+      // emergingRubric: json['alt_mod_summatives']['emerging_rubric'],
+      // capableRubric: json['alt_mod_summatives']['capable_rubric'],
+      // bridgingRubric: json['alt_mod_summatives']['bridging_rubric'],
+      // proficientRubric: json['alt_mod_summatives']['proficient_rubric'],
+      // metacognition: json['alt_mod_summatives']['advanced_rubric'],
     );
   }
 

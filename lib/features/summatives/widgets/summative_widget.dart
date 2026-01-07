@@ -1,22 +1,29 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/route_manager.dart';
 import 'package:intl/intl.dart';
 import 'package:lms_student/features/courses/model/learning_journey.dart';
+import 'package:lms_student/features/home/models/journey.dart';
 import 'package:lms_student/features/home/widgets/journey_widget.dart';
+import 'package:lms_student/features/learning_journey/view/journey_page.dart';
 import 'package:lms_student/features/summatives/model/summative.dart';
 import 'package:shimmer/shimmer.dart';
 
 class SummativeWidget extends StatelessWidget {
   const SummativeWidget({super.key, required this.summative});
-  final Summative summative;
+  final Journey summative;
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      onTap: () {
+        Get.toNamed(JourneyPage.routeName, arguments: summative);
+      },
       leading: CircleAvatar(
         backgroundColor: Colors.white,
-        backgroundImage: summative.image != null
-            ? CachedNetworkImageProvider(summative.image!)
+        backgroundImage: summative.imageLink != null
+            ? CachedNetworkImageProvider(summative.imageLink!)
             : null,
       ),
       title: Row(
@@ -27,7 +34,7 @@ class SummativeWidget extends StatelessWidget {
               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
             ),
           ),
-          Icon(icon(summative.status), color: statusColor(summative.status)),
+          Icon(icon(summative.status!), color: statusColor(summative.status!)),
         ],
       ),
       subtitle: Column(
@@ -42,7 +49,7 @@ class SummativeWidget extends StatelessWidget {
                 'Due Date: ${DateFormat('MM/dd/yyyy').format(summative.dueDate)}',
                 style: TextStyle(
                   fontSize: 15,
-                  color: statusColor(summative.status),
+                  color: statusColor(summative.status!),
                 ),
               ),
             ],

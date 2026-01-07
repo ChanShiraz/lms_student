@@ -63,11 +63,83 @@ class HomeController extends GetxController {
   RxBool fetchingJournies = true.obs;
   RxString fetchingJourniesError = ''.obs;
 
+  // Future<void> fetchJournies() async {
+  //   fetchingJournies.value = true;
+  //   fetchingJourniesError.value = '';
+  //   journies.clear();
+  //   try {
+  //     final response = await supabase
+  //         .from('alt_proficiency_path_assignment')
+  //         .select(
+  //           'a_cid, dmod_sum_id, due_date, completed_date,'
+  //           'alt_mod_summatives(image,title),'
+  //           'alt_courses(title1,course_type,userid_assigned)',
+  //         )
+  //         .eq('userid', userModel.userId!)
+  //         .eq('alt_courses.active', 1)
+  //         .eq('alt_courses.alyid', currentLearningYear)
+  //         .eq('active', 1)
+  //         .order('due_date', ascending: true);
+
+  //     for (final element in response) {
+  //       if (element['alt_courses'] == null) continue;
+
+  //       final status = await homeRepo.getStatus(
+  //         userId: userModel.userId!,
+  //         learningYear: currentLearningYear,
+  //         dmodSumId: element['dmod_sum_id'],
+  //       );
+  //       // await supabase
+  //       //     .from('summative_student_submissions')
+  //       //     .select(
+  //       //       'grade,status,date,assessed_by,assessed,'
+  //       //       'users!summative_student_submissions_userid_fkey(last)',
+  //       //     )
+  //       //     .eq('userid', userModel.userId!)
+  //       //     .eq('learning_year', currentLearningYear)
+  //       //     .eq('dmod_sum_id', element['dmod_sum_id'])
+  //       //     .order('date', ascending: false)
+  //       //     .limit(1)
+  //       //     .maybeSingle();
+
+  //       final journey = Journey.fromMap(
+  //         element: element,
+  //         status: status,
+  //         now: DateTime.now(),
+  //       );
+
+  //       journies.add(journey);
+  //     }
+  //   } catch (e) {
+  //     fetchingJourniesError.value = 'Something went wrong!';
+  //     debugPrint('Error journeys $e');
+  //   }
+  //   fetchingJournies.value = false;
+  // }
+
   Future<void> fetchJournies() async {
     fetchingJournies.value = true;
     fetchingJourniesError.value = '';
     journies.clear();
+
     try {
+      /// 1️⃣ Get active course IDs for the student
+      final activeCoursesResponse = await supabase
+          .from('student_course_assignment')
+          .select('a_cid')
+          .eq('userid', userModel.userId!)
+          .eq('active', 1);
+
+      final activeCourseIds = activeCoursesResponse
+          .map<int>((e) => e['a_cid'] as int)
+          .toSet(); // Set for fast lookup
+
+      if (activeCourseIds.isEmpty) {
+        fetchingJournies.value = false;
+        return;
+      }
+
+      /// 2️⃣ Fetch journeys
       final response = await supabase
           .from('alt_proficiency_path_assignment')
           .select(
@@ -76,44 +148,35 @@ class HomeController extends GetxController {
             'alt_courses(title1,course_type,userid_assigned)',
           )
           .eq('userid', userModel.userId!)
-          .eq('alt_courses.active', 1)
-          .eq('alt_courses.alyid', currentLearningYear)
           .eq('active', 1)
+          .eq('alt_courses.alyid', currentLearningYear)
           .order('due_date', ascending: true);
 
+      /// 3️⃣ Filter based on active courses
       for (final element in response) {
+        final courseId = element['a_cid'];
+        if (courseId == null || !activeCourseIds.contains(courseId)) {
+          continue;
+        }
         if (element['alt_courses'] == null) continue;
-
         final status = await homeRepo.getStatus(
           userId: userModel.userId!,
           learningYear: currentLearningYear,
           dmodSumId: element['dmod_sum_id'],
         );
-        // await supabase
-        //     .from('summative_student_submissions')
-        //     .select(
-        //       'grade,status,date,assessed_by,assessed,'
-        //       'users!summative_student_submissions_userid_fkey(last)',
-        //     )
-        //     .eq('userid', userModel.userId!)
-        //     .eq('learning_year', currentLearningYear)
-        //     .eq('dmod_sum_id', element['dmod_sum_id'])
-        //     .order('date', ascending: false)
-        //     .limit(1)
-        //     .maybeSingle();
 
         final journey = Journey.fromMap(
           element: element,
           status: status,
           now: DateTime.now(),
         );
-
         journies.add(journey);
       }
     } catch (e) {
       fetchingJourniesError.value = 'Something went wrong!';
       debugPrint('Error journeys $e');
     }
+
     fetchingJournies.value = false;
   }
 

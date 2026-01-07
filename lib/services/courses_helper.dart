@@ -65,12 +65,9 @@ class CoursesHelper {
     } catch (e) {
       print('error $e');
       //throw();
-      
     }
     return [];
   }
-
-  
 
   static String courseType(int type) {
     switch (type) {
