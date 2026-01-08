@@ -86,9 +86,10 @@ class FaInputPage extends StatelessWidget {
                       controller.submitFormative(
                         journey.track,
                         journey.courseId,
-                        lesson.lessonId,
+                        lesson.dmod_lesson_id,
                         4,
                         formative,
+                        journey.accessorId
                       );
                     } else {
                       Get.rawSnackbar(message: 'Please enter text!');

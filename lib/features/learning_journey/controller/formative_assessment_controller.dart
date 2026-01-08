@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:get/get.dart';
 import 'package:lms_student/features/home/controller/home_controller.dart';
+import 'package:lms_student/features/learning_journey/controller/journey_controller.dart';
 import 'package:lms_student/features/learning_journey/models/formative_submission.dart';
 import 'package:lms_student/features/learning_journey/models/lesson.dart';
 import 'package:lms_student/features/learning_journey/view/formative/formative_assessment_page.dart';
@@ -15,6 +16,7 @@ class FormativeAssessmentController extends GetxController {
   RxBool submittingFormative = false.obs;
   final faLinkTextController = TextEditingController();
   final QuillController quillController = QuillController.basic();
+  final journeyController = Get.find<JourneyController>();
 
   RxBool fetchingFormative = false.obs;
   Rx<FormativeSubmission?> formative = Rx<FormativeSubmission?>(null);
@@ -43,6 +45,7 @@ class FormativeAssessmentController extends GetxController {
     int lessonId,
     int type,
     LessonFormative lessonFormative,
+    final int accessorId,
   ) async {
     submittingFormative.value = true;
     final userId = homeController.userModel.userId!;
@@ -61,7 +64,7 @@ class FormativeAssessmentController extends GetxController {
         await supabase.from('formative_student_submissions').insert({
           'dmod_form_id': lessonFormative.formId,
           'userid': userId,
-          'assessed_by': formative.value!.assessed_by,
+          'assessed_by': accessorId,
           'title': lessonFormative.title,
           'description': lessonFormative.description,
           'date': now,
@@ -102,7 +105,7 @@ class FormativeAssessmentController extends GetxController {
               'date': now,
               'type': type,
               'path_link': pathLink,
-              'assessed_by': formative.value!.assessed_by,
+              //'assessed_by': formative.value!.assessed_by,
               'status': 0,
               'comment': null,
               'assessed': null,
@@ -114,8 +117,10 @@ class FormativeAssessmentController extends GetxController {
                   : null,
             })
             .eq('fsubid', fsubid);
+
         Get.back();
         Get.back();
+        journeyController.refreshLesson(lessonId);
         Future.delayed(Duration(milliseconds: 300), () {
           Get.rawSnackbar(message: 'Formative resubmitted successfully.');
         });

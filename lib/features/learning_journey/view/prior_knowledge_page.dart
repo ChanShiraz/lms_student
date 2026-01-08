@@ -22,7 +22,7 @@ class _PriorKnowledgePageState extends State<PriorKnowledgePage> {
   final controller = Get.put(KnowledgeController());
   @override
   void initState() {
-    controller.fetchPriorKnowledge(widget.lesson.lessonId);
+    controller.fetchPriorKnowledge(widget.lesson.dmod_lesson_id);
     super.initState();
   }
 
@@ -66,7 +66,7 @@ class _PriorKnowledgePageState extends State<PriorKnowledgePage> {
                             type: knowledge.type,
                             onClick: () {
                               controller.writeAccessed(
-                                widget.lesson.lessonId,
+                                widget.lesson.dmod_lesson_id,
                                 knowledge.dmod_pmat_id,
                               );
                               if (knowledge.link != null &&

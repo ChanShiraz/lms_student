@@ -22,10 +22,9 @@ class _LessonMaterielPageState extends State<LessonMaterielPage> {
   final controller = Get.put(LessonMaterielController());
   @override
   void initState() {
-    controller.fetchLessonTools(widget.lesson.lessonId);
-    controller.fetchLessonMateriel(widget.lesson.lessonId);
-    controller.fetchLessondMateriel(widget.lesson.lessonId);
-
+    controller.fetchLessonTools(widget.lesson.dmod_lesson_id);
+    controller.fetchLessonMateriel(widget.lesson.dmod_lesson_id);
+    controller.fetchLessondMateriel(widget.lesson.dmod_lesson_id);
     super.initState();
   }
 
@@ -48,7 +47,7 @@ class _LessonMaterielPageState extends State<LessonMaterielPage> {
           if (controller.loadingLessonTools.value ||
               controller.loadingLessonMaterial.value ||
               controller.loadingLessonddMaterial.value) {
-            return loadingWidget(itemCount: 6); 
+            return loadingWidget(itemCount: 6);
           }
 
           return ListView(
@@ -61,7 +60,7 @@ class _LessonMaterielPageState extends State<LessonMaterielPage> {
                   type: lessonTool.type,
                   onClick: () {
                     controller.writeLessonToolAccessed(
-                      widget.lesson.lessonId,
+                      widget.lesson.dmod_lesson_id,
                       lessonTool.dmodToolId,
                     );
                     if (lessonTool.path?.isNotEmpty ?? false) {
@@ -83,7 +82,7 @@ class _LessonMaterielPageState extends State<LessonMaterielPage> {
                   type: lessonMaterial.type,
                   onClick: () {
                     controller.writeLessonMaterialAccessed(
-                      widget.lesson.lessonId,
+                      widget.lesson.dmod_lesson_id,
                       lessonMaterial.dmodMatId,
                     );
                     if (lessonMaterial.link?.isNotEmpty ?? false) {

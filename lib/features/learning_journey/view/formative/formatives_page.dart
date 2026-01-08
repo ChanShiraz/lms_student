@@ -41,6 +41,9 @@ class FormativesPage extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.w500),
               ),
               subtitle: Text(lesson.formatives[index].description),
+              trailing: Text(
+                'Status : ${status(lesson.formatives[index].status)}',
+              ),
               onTap: () {
                 Get.toNamed(
                   FormativeAssessmentPage.routeName,
@@ -52,5 +55,20 @@ class FormativesPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String status(int status) {
+    switch (status) {
+      case -1:
+        return 'Not Submitted';
+      case 0:
+        return 'Submitted';
+      case 1:
+        return 'Approved';
+      case 2:
+        return 'Rejected';
+      default:
+        return '';
+    }
   }
 }

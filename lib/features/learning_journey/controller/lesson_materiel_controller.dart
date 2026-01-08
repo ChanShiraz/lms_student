@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:get/get.dart';
 import 'package:lms_student/features/home/controller/home_controller.dart';
+import 'package:lms_student/features/learning_journey/controller/journey_controller.dart';
 import 'package:lms_student/features/learning_journey/models/lesson_tool.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -20,6 +21,7 @@ class LessonMaterielController extends GetxController {
 
   RxBool loadingLessonddMaterial = false.obs;
   RxList<LessondMaterial> lessonddMaterials = <LessondMaterial>[].obs;
+  final journeyController = Get.find<JourneyController>();
 
   fetchLessonTools(int lessonId) async {
     loadingLessonTools.value = true;
@@ -142,6 +144,7 @@ class LessonMaterielController extends GetxController {
           'access_date': DateTime.now().toIso8601String(),
         },
       ]);
+      journeyController.refreshLesson(lessonId);
       print('Lesson materiel access written successfully');
     } catch (e) {
       print('Error writing lesson materiel access $e');

@@ -78,9 +78,10 @@ class FaLinkPage extends StatelessWidget {
                           controller.submitFormative(
                             journey.track,
                             journey.courseId,
-                            lesson.lessonId,
+                            lesson.dmod_lesson_id,
                             2,
-                            formative
+                            formative,
+                            journey.accessorId,
                           );
                         }
                       },

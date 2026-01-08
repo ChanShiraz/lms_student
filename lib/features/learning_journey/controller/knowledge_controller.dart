@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:lms_student/features/home/controller/home_controller.dart';
+import 'package:lms_student/features/learning_journey/controller/journey_controller.dart';
 import 'package:lms_student/features/learning_journey/models/prior_knowledge.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -8,6 +9,7 @@ class KnowledgeController extends GetxController {
   final homeController = Get.find<HomeController>();
   RxList<PriorKnowledge> priorKnowledges = <PriorKnowledge>[].obs;
   RxBool loadingKnowledges = false.obs;
+  final journeyController = Get.find<JourneyController>();
 
   fetchPriorKnowledge(int dmodLessonId) async {
     loadingKnowledges.value = true;
@@ -69,7 +71,7 @@ class KnowledgeController extends GetxController {
           'access_date': DateTime.now().toIso8601String(),
         },
       ]);
-
+      journeyController.refreshLesson(lessonId);
       print('Lesson access written successfully');
     } catch (e) {
       print('Error writing lesson access $e');
