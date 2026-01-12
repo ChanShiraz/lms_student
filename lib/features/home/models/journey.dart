@@ -12,6 +12,7 @@ class Journey {
   int? status;
   double? grade;
   int track;
+  final String task;
 
   Journey({
     required this.courseId,
@@ -27,6 +28,7 @@ class Journey {
     this.assessedBy,
     this.grade,
     required this.track,
+    required this.task,
   });
 
   /// ✅ Factory constructor
@@ -46,6 +48,7 @@ class Journey {
 
     return Journey(
       courseId: element['a_cid'],
+      task: element['alt_mod_summatives']['task'],
       dmodSumId: element['dmod_sum_id'],
       courseTitle: element['alt_courses']['title1'],
       title: element['alt_mod_summatives']['title'],
@@ -54,9 +57,11 @@ class Journey {
       assessedDate: status?['assessed'] != null
           ? DateTime.parse(status!['assessed'])
           : null,
-      assessedBy: status?['assessed_by'] != null
-          ? (status!['users']?['last'])
-          : null,
+      assessedBy:
+          '${element['alt_courses']['users']['first']} ${element['alt_courses']['users']['last']}',
+      // status?['assessed_by'] != null
+      //     ? (status!['users']?['last'])
+      //     : null,
       accessorId: element['alt_courses']['userid_assigned'],
       grade: (status?['grade'] as num?)?.toDouble(),
       status: finalStatus,

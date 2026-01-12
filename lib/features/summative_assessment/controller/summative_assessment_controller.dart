@@ -9,10 +9,10 @@ import 'package:lms_student/features/home/controller/home_controller.dart';
 import 'package:lms_student/features/home/home.dart';
 import 'package:lms_student/features/home/view/home_page.dart';
 import 'package:lms_student/features/learning_journey/helpers/rubric_helper.dart';
-import 'package:lms_student/features/learning_journey/models/approved_material.dart';
-import 'package:lms_student/features/learning_journey/models/resource.dart';
-import 'package:lms_student/features/learning_journey/models/summative_lesson.dart';
-import 'package:lms_student/features/learning_journey/models/summative_submission.dart';
+import 'package:lms_student/features/summative_assessment/models/approved_material.dart';
+import 'package:lms_student/features/summative_assessment/models/resource.dart';
+import 'package:lms_student/features/summative_assessment/models/summative_lesson.dart';
+import 'package:lms_student/features/summative_assessment/models/summative_submission.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SummativeAssessmentController extends GetxController {
@@ -25,6 +25,7 @@ class SummativeAssessmentController extends GetxController {
 
   RxBool fetchingSummativeLesson = false.obs;
   Rx<SummativeLesson?> summativeLesson = Rx<SummativeLesson?>(null);
+  RxInt selectedRubric = 1.obs;
 
   RxBool fetchingSubSummative = false.obs;
   Rx<SummativeSubmission?> submittedSummative = Rx<SummativeSubmission?>(null);
@@ -141,7 +142,7 @@ class SummativeAssessmentController extends GetxController {
         await supabase.from('summative_student_submissions').insert({
           'userid': homeController.userModel.userId,
           'a_cid': courseId,
-          'learning_year': homeController.currentLearningYear,
+          'learning_year': homeController.currentLearningYear.value,
           'track': courseTrack,
           'title': summativeLesson.value!.title,
           'description': summativeLesson.value!.task,

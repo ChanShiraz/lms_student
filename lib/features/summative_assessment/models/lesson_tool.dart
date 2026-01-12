@@ -9,6 +9,7 @@ class LessonTool {
   final String? link;
   final String? path;
   final bool exist;
+  final String? text;
 
   LessonTool({
     required this.dmodToolId,
@@ -21,6 +22,7 @@ class LessonTool {
     required this.exist,
     this.link,
     this.path,
+    this.text,
   });
 }
 
@@ -34,6 +36,7 @@ class LessonMaterial {
   final String? link;
   final String? path;
   final bool exist;
+  final String? text;
 
   LessonMaterial({
     required this.dmodMatId,
@@ -45,6 +48,7 @@ class LessonMaterial {
     required this.exist,
     this.link,
     this.path,
+    this.text,
   });
 }
 
@@ -58,6 +62,7 @@ class LessondMaterial {
   final String? link;
   final String? path;
   final bool exist;
+  final String? text;
 
   LessondMaterial({
     required this.dmodMatId,
@@ -69,5 +74,6 @@ class LessondMaterial {
     required this.exist,
     this.link,
     this.path,
+    this.text,
   });
 }

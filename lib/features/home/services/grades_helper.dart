@@ -22,7 +22,7 @@ class GradeHelper {
     int incomplete,
   ) {
     // print(
-    //   'title $title grade $grade graduated $graduated incomplete $incomplete ',
+    //   'grade $grade graduated $graduated incomplete $incomplete ',
     // );
     if (grade == 7) {
       return 'IN PROGRESS';
@@ -53,6 +53,17 @@ class GradeHelper {
     }
 
     return '';
+  }
+
+  static String getCalGradeLabel(double grade) {
+    if (grade == 8) return "PASS";
+    if (grade < 0.5) return "NO EVIDENCE";
+    if (grade < 1.5) return "EMERGING";
+    if (grade < 2.5) return "CAPABLE";
+    if (grade < 3.5) return "BRIDGING";
+    if (grade < 4.5) return "PROFICIENT";
+    if (grade <= 5) return "METACOGNITION";
+    return "";
   }
 
   static Color getGradeColor(String label) {

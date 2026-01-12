@@ -34,7 +34,7 @@ class SummativeWidget extends StatelessWidget {
               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
             ),
           ),
-          Icon(icon(summative.status!), color: statusColor(summative.status!)),
+          Icon(icon(summative.status), color: statusColor(summative.status)),
         ],
       ),
       subtitle: Column(
@@ -49,7 +49,7 @@ class SummativeWidget extends StatelessWidget {
                 'Due Date: ${DateFormat('MM/dd/yyyy').format(summative.dueDate)}',
                 style: TextStyle(
                   fontSize: 15,
-                  color: statusColor(summative.status!),
+                  color: statusColor(summative.status),
                 ),
               ),
             ],
@@ -59,7 +59,7 @@ class SummativeWidget extends StatelessWidget {
     );
   }
 
-  Color statusColor(int status) {
+  Color statusColor(int? status) {
     if (status == 2) {
       return Colors.orange;
     } else if (status == 1 || status == 0) {
@@ -69,10 +69,10 @@ class SummativeWidget extends StatelessWidget {
     } else if (status == 4) {
       return Colors.red;
     }
-    return Colors.red;
+    return Colors.green;
   }
 
-  IconData? icon(int status) {
+  IconData? icon(int? status) {
     switch (status) {
       case 2:
         return Icons.warning_outlined;

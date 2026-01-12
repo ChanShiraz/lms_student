@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
-import 'package:lms_student/features/learning_journey/controller/summative_assessment_controller.dart';
-import 'package:lms_student/features/learning_journey/models/resource.dart';
-import 'package:lms_student/features/learning_journey/view/summative/widgets/text_dialog.dart';
+import 'package:lms_student/features/summative_assessment/controller/summative_assessment_controller.dart';
+import 'package:lms_student/features/summative_assessment/models/resource.dart';
+import 'package:lms_student/features/summative_assessment/widgets/text_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ResourcesList extends StatelessWidget {

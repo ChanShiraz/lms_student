@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:get/instance_manager.dart';
 import 'package:get/route_manager.dart';
+import 'package:lms_student/common/custom_appbar.dart';
 import 'package:lms_student/features/learning_journey/controller/knowledge_controller.dart';
 import 'package:lms_student/features/learning_journey/models/lesson.dart';
-import 'package:lms_student/features/learning_journey/models/prior_knowledge.dart';
+import 'package:lms_student/features/summative_assessment/models/prior_knowledge.dart';
 import 'package:lms_student/features/learning_journey/view/lesson_materiel_page.dart';
 import 'package:lms_student/features/learning_journey/widgets/prior_knowledge_widget.dart';
+import 'package:lms_student/features/summative_assessment/widgets/text_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PriorKnowledgePage extends StatefulWidget {
@@ -29,15 +31,9 @@ class _PriorKnowledgePageState extends State<PriorKnowledgePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(widget.lesson.title),
-            Text('Prior Knowledge', style: TextStyle(fontSize: 16)),
-          ],
-        ),
-        centerTitle: false,
+      appBar: CustomAppbar(
+        title: 'Prior Knowledge',
+        subtitle: widget.lesson.title,
       ),
       body: Padding(
         padding: EdgeInsetsGeometry.all(10),
@@ -72,6 +68,13 @@ class _PriorKnowledgePageState extends State<PriorKnowledgePage> {
                               if (knowledge.link != null &&
                                   knowledge.link!.isNotEmpty) {
                                 launchMyUrl(knowledge.link!);
+                              }
+                              if (knowledge.type == 4) {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) =>
+                                      TextDialog(initialText: knowledge.text),
+                                );
                               }
                             },
                           );

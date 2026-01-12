@@ -29,20 +29,20 @@ class SummativeController extends GetxController {
           .from('alt_proficiency_path_assignment')
           .select(
             'a_cid, dmod_sum_id, due_date, completed_date,'
-            'alt_mod_summatives(image,title),'
-            'alt_courses(title1,course_type,userid_assigned)',
+            'alt_mod_summatives(image,title,task),'
+            'alt_courses(title1,course_type,userid_assigned,users(first,last))',
           )
           .eq('a_cid', acid)
           .eq('userid', homeController.userModel.userId!)
           .eq('active', 1)
-          .eq('alt_courses.alyid', homeController.currentLearningYear)
+          .eq('alt_courses.alyid', homeController.currentLearningYear.value)
           .order('due_date', ascending: true);
 
       /// 3️⃣ Filter based on active courses
       for (final element in response) {
         final status = await homeRepo.getStatus(
           userId: homeController.userModel.userId!,
-          learningYear: homeController.currentLearningYear,
+          learningYear: homeController.currentLearningYear.value,
           dmodSumId: element['dmod_sum_id'],
         );
 

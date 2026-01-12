@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:get/get.dart';
 import 'package:lms_student/features/home/controller/home_controller.dart';
 import 'package:lms_student/features/learning_journey/controller/journey_controller.dart';
-import 'package:lms_student/features/learning_journey/models/lesson_tool.dart';
+import 'package:lms_student/features/summative_assessment/models/lesson_tool.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LessonMaterielController extends GetxController {
@@ -47,6 +47,7 @@ class LessonMaterielController extends GetxController {
             type: element['type'],
             link: element['link'],
             path: element['path'],
+            text: element['text'],
             exist: existList != null && existList.isNotEmpty ? true : false,
           ),
         );
@@ -112,6 +113,7 @@ class LessonMaterielController extends GetxController {
             type: element['type'],
             link: element['link'],
             path: element['path'],
+            text: element['text'],
             exist: existList != null && existList.isNotEmpty ? true : false,
           ),
         );
@@ -173,6 +175,7 @@ class LessonMaterielController extends GetxController {
             link: element['link'],
             path: element['path'],
             exist: false,
+            text: element['text'],
           ),
         );
       }

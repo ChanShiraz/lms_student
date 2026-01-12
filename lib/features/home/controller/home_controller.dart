@@ -22,16 +22,36 @@ class HomeController extends GetxController {
   late UserModel userModel;
   final box = GetStorage();
   RxInt lpWork = 0.obs;
-  int currentLearningYear = 13;
+  RxInt currentLearningYear = 0.obs;
 
   @override
-  void onInit() {
+  void onInit() async {
     userModel = UserModel.fromJson(box.read('user'));
     //print(await learningYear());
+    await loadCurrentLY(userModel.schoolId!);
     fetchStudentCourses();
     fetchJournies();
-
     super.onInit();
+  }
+
+  RxBool isLoading = false.obs;
+
+  Future<void> loadCurrentLY(int schoolId) async {
+    isLoading.value = true;
+    try {
+      final query = supabase
+          .from('alt_learning_year')
+          .select('alyid')
+          .eq('schoolid', schoolId)
+          .eq('current', 1)
+          .single();
+      final result = await query;
+      currentLearningYear.value = result['alyid'];
+      print('Current LY: ${currentLearningYear.value}');
+    } catch (e) {
+      print('error $e');
+    }
+    isLoading.value = false;
   }
 
   Future<int> learningYear() async {
@@ -51,7 +71,7 @@ class HomeController extends GetxController {
       fetchingCoursesError.value = '';
       courses.value = await CoursesHelper.fetchStudentCourses(
         userId: userModel.userId!,
-        learningYear: currentLearningYear,
+        learningYear: currentLearningYear.value,
       );
     } catch (e) {
       fetchingCoursesError.value = 'Something went wrong';
@@ -144,8 +164,8 @@ class HomeController extends GetxController {
           .from('alt_proficiency_path_assignment')
           .select(
             'a_cid, dmod_sum_id, due_date, completed_date,'
-            'alt_mod_summatives(image,title),'
-            'alt_courses(title1,course_type,userid_assigned)',
+            'alt_mod_summatives(image,title,task),'
+            'alt_courses(title1,course_type,userid_assigned,users(first,last))',
           )
           .eq('userid', userModel.userId!)
           .eq('active', 1)
@@ -161,7 +181,7 @@ class HomeController extends GetxController {
         if (element['alt_courses'] == null) continue;
         final status = await homeRepo.getStatus(
           userId: userModel.userId!,
-          learningYear: currentLearningYear,
+          learningYear: currentLearningYear.value,
           dmodSumId: element['dmod_sum_id'],
         );
 
@@ -203,7 +223,7 @@ class HomeController extends GetxController {
       final status = await homeRepo.getStatus(
         userId: userModel.userId!,
         dmodSumId: dmodSumId,
-        learningYear: currentLearningYear,
+        learningYear: currentLearningYear.value,
       );
       final updatedJourney = Journey.fromMap(
         element: element,
@@ -239,7 +259,6 @@ class HomeController extends GetxController {
     double kwlBonus = (totalKwlSubmissions * 5).clamp(0, 10).toDouble();
     double finalLp = averageCourseLp + kwlBonus;
     print('total lp $finalLp');
-
     return finalLp;
   }
 }

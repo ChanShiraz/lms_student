@@ -6,8 +6,14 @@ class AppTheme {
     appBarTheme: AppBarTheme(
       backgroundColor: AppColors.primaryColor,
       iconTheme: IconThemeData(color: Colors.white),
-      titleTextStyle: TextStyle(color: Colors.white, fontSize: 20,fontWeight: FontWeight.w500),
+      titleTextStyle: TextStyle(
+        color: Colors.white,
+        fontSize: 20,
+        fontWeight: FontWeight.w500,
+      ),
+      toolbarHeight: 72,
     ),
+
     scaffoldBackgroundColor: Color(0xfffbfcff),
     colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primaryColor),
     brightness: Brightness.light,

@@ -17,12 +17,15 @@ class GradeWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final label = GradeHelper.getGradeLabel(
-      //course.title!,
-      course.grade ?? 0.0,
-      course.graduated ?? 0,
-      course.incomplete ?? 1,
-    );
+    final label = course.simpleGrade != null && course.simpleGrade! == 7
+        ? GradeHelper.getCalGradeLabel(course.grade!)
+        : GradeHelper.getGradeLabel(
+            //course.title!,
+            course.grade ?? 0.0,
+            course.graduated ?? 0,
+            course.incomplete ?? 1,
+          );
+    print('course grade $label');
     final color = GradeHelper.getGradeColor(label);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3),
@@ -147,7 +150,8 @@ class GradeWidget extends StatelessWidget {
                           aCid: course.cid,
                           schoolId: homeController.userModel.schoolId!,
                           currentLearningYear: homeController
-                              .currentLearningYear, // pass actual course ID
+                              .currentLearningYear
+                              .value, // pass actual course ID
                         ),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==

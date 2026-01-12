@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:lms_student/features/learning_journey/controller/knowledge_controller.dart';
-import 'package:lms_student/features/learning_journey/models/prior_knowledge.dart';
+import 'package:lms_student/features/summative_assessment/models/prior_knowledge.dart';
 
 class PriorKnowledgeWidget extends StatelessWidget {
   const PriorKnowledgeWidget({

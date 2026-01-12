@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lms_student/common/custom_appbar.dart';
 
 class KwlPage extends StatelessWidget {
   const KwlPage({super.key});
@@ -6,19 +7,20 @@ class KwlPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Lesson 1: The Cell',
-              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
-            ),
-            Text('KWL Input'),
-          ],
-        ),
-        centerTitle: false,
-      ),
+      appBar: CustomAppbar(title: 'KWL Input', subtitle: 'Lesson 1: The Cell'),
+      //  AppBar(
+      //   title: Column(
+      //     crossAxisAlignment: CrossAxisAlignment.start,
+      //     children: [
+      //       Text(
+      //         'Lesson 1: The Cell',
+      //         style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+      //       ),
+      //       Text('KWL Input'),
+      //     ],
+      //   ),
+      //   centerTitle: false,
+      // ),
       body: Padding(
         padding: EdgeInsetsGeometry.all(10),
         child: Column(

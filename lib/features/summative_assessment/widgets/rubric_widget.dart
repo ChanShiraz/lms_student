@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:lms_student/features/learning_journey/helpers/rubric_helper.dart';
-import 'package:lms_student/features/learning_journey/view/summative/widgets/loading_widget.dart';
 
 class RubricWidget extends StatelessWidget {
   RubricWidget({super.key});
@@ -14,7 +13,7 @@ class RubricWidget extends StatelessWidget {
       padding: const EdgeInsets.only(top: 10),
       child: Obx(() {
         return rubricController.fetchingRubric.value
-            ? TextShimmer()
+            ? SizedBox()
             : ListView.builder(
                 physics: NeverScrollableScrollPhysics(),
                 itemCount: rubricController.rubrics.length,

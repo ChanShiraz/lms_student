@@ -12,7 +12,7 @@ class Lesson {
     required this.formatives,
     required this.pMaterialAccessed,
     required this.lMaterialAccessed,
-    required this.formativeStatus
+    required this.formativeStatus,
   });
 }
 
@@ -21,11 +21,19 @@ class LessonFormative {
   final String title;
   final String description;
   final int status;
+  final int type;
+  final String? link;
+  final String? path;
+  final String? text;
 
   LessonFormative({
     required this.formId,
     required this.title,
     required this.description,
     required this.status,
+    required this.type,
+    this.link,
+    this.path,
+    this.text,
   });
 }

@@ -8,7 +8,6 @@ class HomeRepo {
     required int dmodSumId,
     required int learningYear,
   }) async {
-    print('dmod sum id $dmodSumId');
     final status = await supabase
         .from('summative_student_submissions')
         .select(
@@ -21,6 +20,7 @@ class HomeRepo {
         .order('date', ascending: false)
         .limit(1)
         .maybeSingle();
+    //print('dmod sum id $dmodSumId status ${status?['status']}');
     return status;
   }
 }

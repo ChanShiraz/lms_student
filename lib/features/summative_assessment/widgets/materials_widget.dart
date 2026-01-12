@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
-import 'package:lms_student/features/learning_journey/controller/summative_assessment_controller.dart';
-import 'package:lms_student/features/learning_journey/models/approved_material.dart';
-import 'package:lms_student/features/learning_journey/models/resource.dart';
-import 'package:lms_student/features/learning_journey/view/summative/widgets/resources_widget.dart';
-import 'package:lms_student/features/learning_journey/view/summative/widgets/text_dialog.dart';
+import 'package:lms_student/common/round_container.dart';
+import 'package:lms_student/features/summative_assessment/controller/summative_assessment_controller.dart';
+import 'package:lms_student/features/summative_assessment/models/approved_material.dart';
+import 'package:lms_student/features/summative_assessment/models/resource.dart';
+import 'package:lms_student/features/summative_assessment/widgets/resources_widget.dart';
+import 'package:lms_student/features/summative_assessment/widgets/text_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ApprovedMaterialList extends StatelessWidget {
@@ -19,29 +20,41 @@ class ApprovedMaterialList extends StatelessWidget {
         return SizedBox();
       }
 
-      return ExpansionTile(
-        shape: Border(),
-        title: Text(
-          'Approved Instructional Material',
-          style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
+      return RoundContainer(
+        padding: 0,
+        child: ExpansionTile(
+          leading: RoundContainer(
+            color: Colors.grey.shade50,
+            circular: 15,
+            child: Icon(Icons.military_tech_rounded, size: 20),
+          ),
+          shape: Border(),
+          title: Text(
+            'Approved Material',
+            style: TextStyle(fontWeight: FontWeight.w500),
+          ),
+          subtitle: Text(
+            'Approved Instructional Material',
+            style: TextStyle(color: Colors.grey),
+          ),
+          children: [
+            controller.approveMat.isNotEmpty
+                ? ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: controller.approveMat.length,
+                    itemBuilder: (context, index) {
+                      return MaterialsWidget(
+                        material: controller.approveMat[index],
+                      );
+                    },
+                  )
+                : Text(
+                    'No material attached!',
+                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                  ),
+          ],
         ),
-        children: [
-          controller.approveMat.isNotEmpty
-              ? ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: controller.approveMat.length,
-                  itemBuilder: (context, index) {
-                    return MaterialsWidget(
-                      material: controller.approveMat[index],
-                    );
-                  },
-                )
-              : Text(
-                  'No material attached!',
-                  style: TextStyle(color: Colors.grey, fontSize: 12),
-                ),
-        ],
       );
     });
   }

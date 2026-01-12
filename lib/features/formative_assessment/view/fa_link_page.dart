@@ -3,15 +3,21 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/instance_manager.dart';
 import 'package:get/state_manager.dart';
 import 'package:lms_student/features/home/models/journey.dart';
-import 'package:lms_student/features/learning_journey/controller/formative_assessment_controller.dart';
-import 'package:lms_student/features/learning_journey/controller/summative_assessment_controller.dart';
+import 'package:lms_student/features/formative_assessment/controller/formative_assessment_controller.dart';
 import 'package:lms_student/features/learning_journey/models/lesson.dart';
 
-class SaLinkPage extends StatelessWidget {
-  SaLinkPage({super.key, required this.journey});
+class FaLinkPage extends StatelessWidget {
+  FaLinkPage({
+    super.key,
+    required this.lesson,
+    required this.journey,
+    required this.formative,
+  });
+  final Lesson lesson;
   final Journey journey;
-  static final routeName = '/salinkpage';
-  final controller = Get.find<SummativeAssessmentController>();
+  final LessonFormative formative;
+  static final routeName = '/falinkpage';
+  final controller = Get.find<FormativeAssessmentController>();
   final formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
@@ -21,10 +27,10 @@ class SaLinkPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              journey.title,
+              formative.title,
               style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
             ),
-            Text('Summative Assessment'),
+            Text('Formative Assessment'),
           ],
         ),
         centerTitle: false,
@@ -40,7 +46,7 @@ class SaLinkPage extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 5),
                 child: Text(
-                  'Submit evidence of your understanding of cell structure and function. You may include a video, slide deck, blog post, or written summary.',
+                  formative.description,
                   style: TextStyle(fontSize: 14, color: Colors.black54),
                 ),
               ),
@@ -49,7 +55,7 @@ class SaLinkPage extends StatelessWidget {
                 child: Column(
                   children: [
                     TextFormField(
-                      controller: controller.saLinkTextController,
+                      controller: controller.faLinkTextController,
                       decoration: InputDecoration(
                         prefixIcon: Icon(Icons.link),
                         hint: Text(
@@ -69,11 +75,12 @@ class SaLinkPage extends StatelessWidget {
                       onPressed: () {
                         FocusScope.of(context).unfocus();
                         if (formKey.currentState!.validate()) {
-                          controller.submitSummative(
-                            journey.dmodSumId,
+                          controller.submitFormative(
                             journey.track,
                             journey.courseId,
+                            lesson.dmod_lesson_id,
                             2,
+                            formative,
                             journey.accessorId,
                           );
                         }
@@ -82,7 +89,7 @@ class SaLinkPage extends StatelessWidget {
                         minimumSize: Size(200, 40),
                       ),
                       child: Obx(
-                        () => controller.submittingSummative.value
+                        () => controller.submittingFormative.value
                             ? Transform.scale(
                                 scale: 0.8,
                                 child: CircularProgressIndicator(

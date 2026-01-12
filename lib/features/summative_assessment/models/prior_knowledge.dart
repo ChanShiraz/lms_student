@@ -6,6 +6,7 @@ class PriorKnowledge {
   final int type;
   final String? link;
   final String? path;
+  final String? text;
 
   PriorKnowledge({
     required this.dmod_pmat_id,
@@ -15,5 +16,6 @@ class PriorKnowledge {
     required this.type,
     this.link,
     this.path,
+    this.text,
   });
 }

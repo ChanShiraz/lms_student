@@ -3,9 +3,11 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/route_manager.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:lms_student/common/shimmer_tile.dart';
 import 'package:lms_student/features/auth/view/login_page.dart';
 import 'package:lms_student/features/courses/view/courses_page.dart';
 import 'package:lms_student/features/grades/view/grades_page.dart';
+import 'package:lms_student/features/home/controller/home_controller.dart';
 import 'package:lms_student/features/home/view/home_page.dart';
 import 'package:lms_student/features/home/widgets/drawer.dart';
 import 'package:lms_student/features/messages/view/messaging_page.dart';
@@ -23,6 +25,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  late HomeController controller;
   int selectedIndex = 0;
   List<Widget> pages = [
     HomePage(),
@@ -32,6 +35,7 @@ class _HomeState extends State<Home> {
   ];
   @override
   void initState() {
+    controller = Get.put(HomeController());
     ProfileController profileController = Get.put(ProfileController());
     profileController.getUser();
     super.initState();
@@ -39,6 +43,7 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.primaryColor,
@@ -57,7 +62,26 @@ class _HomeState extends State<Home> {
         ],
       ),
       drawer: MyDrawer(),
-      body: IndexedStack(index: selectedIndex, children: pages),
+      body: Obx(
+        () => controller.isLoading.value
+            ? Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
+                child: Column(
+                  children: [
+                    ShimmerTile(width: double.infinity, height: height * 0.15),
+                    SizedBox(height: 10),
+                    ShimmerTile(width: double.infinity, height: height * 0.1),
+                    SizedBox(height: 10),
+                    ShimmerTile(width: double.infinity, height: height * 0.2),
+                  ],
+                ),
+              )
+            : IndexedStack(index: selectedIndex, children: pages),
+      ),
+
       // pages[selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: selectedIndex,
@@ -66,7 +90,6 @@ class _HomeState extends State<Home> {
             selectedIndex = value;
           });
         },
-
         selectedIconTheme: const IconThemeData(size: 30),
         backgroundColor: AppColors.primaryColor,
         unselectedItemColor: Colors.white54,

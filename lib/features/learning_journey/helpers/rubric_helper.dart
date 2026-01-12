@@ -94,6 +94,7 @@ class RubricController extends GetxController {
         rubrics.add(element['integrated_rubric_description']);
       }
       rubrics.refresh();
+      print('rubric $rubrics');
     } catch (e) {
       print('Error fething rubrics $e');
     }

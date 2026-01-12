@@ -114,7 +114,7 @@ class SubjectDetails extends StatelessWidget {
                             aCid: course.cid,
                             schoolId: homeController.userModel.schoolId!,
                             currentLearningYear:
-                                homeController.currentLearningYear,
+                                homeController.currentLearningYear.value,
                             couresType: course.courseType!,
                           ),
                           builder: (context, snapshot) {

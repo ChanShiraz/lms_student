@@ -100,7 +100,7 @@ class Course {
         userId: homeController.userModel.userId!,
         aCid: cid,
         schoolId: homeController.userModel.schoolId!,
-        currentLearningYear: homeController.currentLearningYear,
+        currentLearningYear: homeController.currentLearningYear.value,
         couresType: courseType!,
       );
     }
@@ -114,7 +114,7 @@ class Course {
   Future<Map<String, int>> getCourseLp() async {
     return await CoursesHelper.getCourseLp(
       couresType: courseType!,
-      currentLearningYear: homeController.currentLearningYear,
+      currentLearningYear: homeController.currentLearningYear.value,
       schoolId: homeController.userModel.schoolId!,
       cid: cid,
       userId: homeController.userModel.userId!,

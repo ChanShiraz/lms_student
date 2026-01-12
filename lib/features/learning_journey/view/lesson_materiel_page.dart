@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:get/instance_manager.dart';
 import 'package:get/utils.dart';
+import 'package:lms_student/common/custom_appbar.dart';
 import 'package:lms_student/features/learning_journey/controller/lesson_materiel_controller.dart';
 import 'package:lms_student/features/learning_journey/models/lesson.dart';
-import 'package:lms_student/features/learning_journey/models/lesson_tool.dart';
+import 'package:lms_student/features/summative_assessment/models/lesson_tool.dart';
 import 'package:lms_student/features/learning_journey/view/prior_knowledge_page.dart';
 import 'package:lms_student/features/learning_journey/widgets/prior_knowledge_widget.dart';
+import 'package:lms_student/features/summative_assessment/widgets/text_dialog.dart';
 import 'package:shimmer/shimmer.dart';
 
 class LessonMaterielPage extends StatefulWidget {
@@ -31,15 +33,9 @@ class _LessonMaterielPageState extends State<LessonMaterielPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(widget.lesson.title),
-            const Text('Lesson Material', style: TextStyle(fontSize: 16)),
-          ],
-        ),
-        centerTitle: false,
+      appBar: CustomAppbar(
+        title: 'Lesson Material',
+        subtitle: widget.lesson.title,
       ),
       body: Padding(
         padding: const EdgeInsets.all(10),
@@ -69,6 +65,13 @@ class _LessonMaterielPageState extends State<LessonMaterielPage> {
                     if (lessonTool.link?.isNotEmpty ?? false) {
                       launchMyUrl(lessonTool.link!);
                     }
+                    if (lessonTool.type == 4) {
+                      showDialog(
+                        context: context,
+                        builder: (context) =>
+                            TextDialog(initialText: lessonTool.text),
+                      );
+                    }
                   },
                 ),
               ),
@@ -88,6 +91,13 @@ class _LessonMaterielPageState extends State<LessonMaterielPage> {
                     if (lessonMaterial.link?.isNotEmpty ?? false) {
                       launchMyUrl(lessonMaterial.link!);
                     }
+                    if (lessonMaterial.type == 4) {
+                      showDialog(
+                        context: context,
+                        builder: (context) =>
+                            TextDialog(initialText: lessonMaterial.text),
+                      );
+                    }
                   },
                 ),
               ),
@@ -104,6 +114,13 @@ class _LessonMaterielPageState extends State<LessonMaterielPage> {
                     if (lessondMaterial.link?.isNotEmpty ?? false) {
                       launchMyUrl(lessondMaterial.link!);
                     }
+                    if (lessondMaterial.type == 4) {
+                      showDialog(
+                        context: context,
+                        builder: (context) =>
+                            TextDialog(initialText: lessondMaterial.text),
+                      );
+                    }
                   },
                 ),
               ),
@@ -116,12 +133,10 @@ class _LessonMaterielPageState extends State<LessonMaterielPage> {
 }
 
 Widget loadingWidget({int itemCount = 2}) {
-  return Flexible(
-    child: ListView.builder(
-      shrinkWrap: true,
-      itemCount: itemCount,
-      itemBuilder: (context, index) => ShimmerWidget(),
-    ),
+  return ListView.builder(
+    shrinkWrap: true,
+    itemCount: itemCount,
+    itemBuilder: (context, index) => ShimmerWidget(),
   );
 }
 

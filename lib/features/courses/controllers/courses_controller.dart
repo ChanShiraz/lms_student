@@ -19,7 +19,7 @@ class CoursesController extends GetxController {
     loadingCourses.value = true;
     courses.value = await CoursesHelper.fetchStudentCourses(
       userId: homeController.userModel.userId!,
-      learningYear: homeController.currentLearningYear,
+      learningYear: homeController.currentLearningYear.value,
       active: false,
     );
     loadingCourses.value = false;

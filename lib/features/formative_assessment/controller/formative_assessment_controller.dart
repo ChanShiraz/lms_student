@@ -5,9 +5,9 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:get/get.dart';
 import 'package:lms_student/features/home/controller/home_controller.dart';
 import 'package:lms_student/features/learning_journey/controller/journey_controller.dart';
-import 'package:lms_student/features/learning_journey/models/formative_submission.dart';
+import 'package:lms_student/features/formative_assessment/models/formative_submission.dart';
 import 'package:lms_student/features/learning_journey/models/lesson.dart';
-import 'package:lms_student/features/learning_journey/view/formative/formative_assessment_page.dart';
+import 'package:lms_student/features/formative_assessment/view/formative_assessment_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class FormativeAssessmentController extends GetxController {
@@ -26,7 +26,9 @@ class FormativeAssessmentController extends GetxController {
     try {
       final response = await supabase
           .from('formative_student_submissions')
-          .select('*,users!formative_student_submissions_userid_fkey(first)')
+          .select(
+            '*,users!formative_student_submissions_assessed_by_fkey(first)',
+          )
           .eq('dmod_form_id', formId)
           .eq('userid', homeController.userModel.userId!)
           .maybeSingle();
@@ -74,7 +76,7 @@ class FormativeAssessmentController extends GetxController {
           'page': '0',
           'dmod_lesson_id': lessonId,
           'a_cid': courseId,
-          'learning_year': homeController.currentLearningYear,
+          'learning_year': homeController.currentLearningYear.value,
           'track': courseTrack,
           'resub_status': 0,
           'student_viewed': 0,
@@ -120,11 +122,12 @@ class FormativeAssessmentController extends GetxController {
 
         Get.back();
         Get.back();
-        journeyController.refreshLesson(lessonId);
+        // journeyController.refreshLesson(lessonId);
         Future.delayed(Duration(milliseconds: 300), () {
           Get.rawSnackbar(message: 'Formative resubmitted successfully.');
         });
       }
+      journeyController.refreshLesson(lessonId);
     } catch (e) {
       Get.rawSnackbar(message: 'Error submitting formative, Please try again!');
       print('Error submitting formative: $e');

@@ -4,11 +4,13 @@ import 'package:get/get_navigation/get_navigation.dart';
 import 'package:get/instance_manager.dart';
 import 'package:get/utils.dart';
 import 'package:intl/intl.dart';
+import 'package:lms_student/common/custom_appbar.dart';
 import 'package:lms_student/features/home/models/journey.dart';
 import 'package:lms_student/features/learning_journey/controller/journey_controller.dart';
-import 'package:lms_student/features/learning_journey/view/summative/summative_assessment_page.dart';
 import 'package:lms_student/features/learning_journey/widgets/lesson_widget.dart';
 import 'package:lms_student/features/learning_journey/widgets/modified_stepper.dart';
+import 'package:lms_student/features/summative_assessment/view/summative_assessment_page.dart'
+    show SummativeAssessmentPage;
 import 'package:lms_student/features/summatives/widgets/summative_widget.dart';
 
 class JourneyPage extends StatefulWidget {
@@ -35,7 +37,9 @@ class _JourneyPageState extends State<JourneyPage> {
         ? dateColor(widget.journey.status!)
         : Colors.blue;
     return Scaffold(
-      appBar: AppBar(title: Text('Learning Journey')),
+      appBar:
+          // AppBar(title: Text('Learning Journey')),
+          CustomAppbar(title: 'Learning Journey'),
       body: Obx(
         () => controller.isLoadingTitles.value
             ? Center(child: CircularProgressIndicator())

@@ -16,7 +16,7 @@ class JourneyController extends GetxController {
       final response = await supabase
           .from('alt_mod_lessons')
           .select(
-            'title,dmod_lesson_id,alt_proficiency_path_lessons(due_date),alt_mod_lesson_formatives(dmod_form_id,title,description),pmaterial_student_access(accessed),tool_student_access(accessed),material_student_access(accessed)',
+            'title,dmod_lesson_id,alt_proficiency_path_lessons(due_date),alt_mod_lesson_formatives(dmod_form_id,title,description,type,link,path,text),pmaterial_student_access(accessed),tool_student_access(accessed),material_student_access(accessed)',
           )
           .eq('dmod_sum_id', dmodSumId)
           .eq(
@@ -40,6 +40,10 @@ class JourneyController extends GetxController {
                 title: element['title'],
                 description: element['description'],
                 status: await checkFormativeStatus(element['dmod_form_id']),
+                type: element['type'],
+                link: element['link'],
+                path: element['path'],
+                text: element['text'],
               ),
             );
           }
@@ -106,7 +110,7 @@ class JourneyController extends GetxController {
         .select('''
         title,
         dmod_lesson_id,
-        alt_mod_lesson_formatives(dmod_form_id,title,description),
+        alt_mod_lesson_formatives(dmod_form_id,title,description,type,link,path,text),
         pmaterial_student_access(accessed),
         tool_student_access(accessed),
         material_student_access(accessed)
@@ -125,6 +129,10 @@ class JourneyController extends GetxController {
           title: f['title'],
           description: f['description'],
           status: await checkFormativeStatus(f['dmod_form_id']),
+          type: f['type'],
+          link: f['link'],
+          path: f['path'],
+          text: f['text'],
         ),
       );
     }

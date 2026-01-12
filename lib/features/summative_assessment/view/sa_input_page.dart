@@ -5,8 +5,8 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:lms_student/features/home/models/journey.dart';
-import 'package:lms_student/features/learning_journey/controller/formative_assessment_controller.dart';
-import 'package:lms_student/features/learning_journey/controller/summative_assessment_controller.dart';
+import 'package:lms_student/features/formative_assessment/controller/formative_assessment_controller.dart';
+import 'package:lms_student/features/summative_assessment/controller/summative_assessment_controller.dart';
 import 'package:lms_student/features/learning_journey/models/lesson.dart';
 
 class SaInputPage extends StatelessWidget {
