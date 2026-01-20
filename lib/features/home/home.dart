@@ -105,7 +105,45 @@ class _HomeState extends State<Home> {
             icon: Icon(Icons.health_and_safety_outlined),
             label: 'Grades',
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Messages'),
+          BottomNavigationBarItem(
+            icon: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Icon(Icons.chat),
+
+                Obx(
+                  () => controller.totalUnread > 0
+                      ? Positioned(
+                          right: -6,
+                          top: -6,
+                          child: Container(
+                            padding: EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
+                            ),
+                            constraints: BoxConstraints(
+                              minWidth: 16,
+                              minHeight: 16,
+                            ),
+                            child: Center(
+                              child: Text(
+                                controller.totalUnread.value.toString(),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      : SizedBox(),
+                ),
+              ],
+            ),
+            label: 'Messages',
+          ),
         ],
       ),
     );

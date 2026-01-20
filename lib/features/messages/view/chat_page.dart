@@ -1,31 +1,76 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/instance_manager.dart';
+import 'package:lms_student/common/custom_appbar.dart';
+import 'package:lms_student/features/messages/controllers/chat_controller.dart';
+import 'package:lms_student/features/messages/controllers/messaging_controller.dart';
+import 'package:lms_student/features/messages/models/chat_thread.dart';
+import 'package:lms_student/features/messages/models/thread_types.dart';
 
-class ChatPage extends StatelessWidget {
-  ChatPage({super.key});
+class ChatPage extends StatefulWidget {
+  const ChatPage({super.key, required this.chatThread});
+  final ChatThread chatThread;
   static final routeName = '/chatpage';
-  final List<Map<String, dynamic>> messages = [
-    {"text": "Hi there!", "isMe": false},
-    {"text": "Hello! How are you?", "isMe": true},
-    {"text": "I’m doing well, thanks.", "isMe": false},
-  ];
+
+  @override
+  State<ChatPage> createState() => _ChatPageState();
+}
+
+class _ChatPageState extends State<ChatPage> {
+  late ChatController controller;
+  final messagingController = Get.find<MessagingController>();
+  @override
+  void initState() {
+    controller = Get.put(ChatController(threadId: widget.chatThread.thread_id));
+    controller.findDirectThread();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Chat with John")),
+      appBar: CustomAppbar(
+        onBackPressed: () {
+          controller.unsubsribeMessages();
+          Get.back();
+        },
+        title: widget.chatThread.kind == ThreadType.direct
+            ? widget.chatThread.userName ?? ''
+            : widget.chatThread.title ?? '',
+        subtitle:
+            widget.chatThread.kind == ThreadType.course ||
+                widget.chatThread.courseTitle != null
+            ? widget.chatThread.courseTitle
+            : null,
+      ),
+
       body: Column(
         children: [
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(8),
-              itemCount: messages.length,
-              itemBuilder: (context, index) {
-                final msg = messages[index];
-                return _buildMessageBubble(msg["text"], msg["isMe"]);
-              },
+          Obx(
+            () => Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: ListView.builder(
+                  controller: controller.scrollController,
+                  itemCount: controller.messages.length + 1,
+                  itemBuilder: (context, index) {
+                    if (index == 0) {
+                      return LoadOlderMessagesListItem(controller: controller);
+                    }
+                    final msg = controller.messages[index - 1];
+                    return _buildMessageBubble(
+                      msg.text,
+                      controller.homeController.userModel.userId ==
+                          msg.senderId,
+                    );
+                  },
+                ),
+              ),
             ),
           ),
-          _buildMessageInput(),
+          widget.chatThread.kind == ThreadType.direct
+              ? _buildMessageInput()
+              : SizedBox(),
         ],
       ),
     );
@@ -36,11 +81,11 @@ class ChatPage extends StatelessWidget {
       mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        if (!isMe)
-          const CircleAvatar(
-            radius: 18,
-            backgroundImage: AssetImage('assets/images/user1.png'),
-          ),
+        // if (!isMe)
+        //   const CircleAvatar(
+        //     radius: 18,
+        //     backgroundImage: AssetImage('assets/images/user1.png'),
+        //   ),
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -63,11 +108,11 @@ class ChatPage extends StatelessWidget {
             style: TextStyle(color: isMe ? Colors.white : Colors.black),
           ),
         ),
-        if (isMe)
-          const CircleAvatar(
-            radius: 18,
-            backgroundImage: AssetImage('assets/images/user2.png'),
-          ),
+        // if (isMe)
+        //   const CircleAvatar(
+        //     radius: 18,
+        //     backgroundImage: AssetImage('assets/images/user2.png'),
+        //   ),
       ],
     );
   }
@@ -80,7 +125,14 @@ class ChatPage extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextField(
-                //controller: _controller,
+                controller: controller.messageBodyController,
+                textInputAction: TextInputAction.send, // Enter key shows "Send"
+                onSubmitted: (_) {
+                  final text = controller.messageBodyController.text.trim();
+                  if (text.isEmpty) return;
+                  controller.sendMessage(body: text);
+                  controller.messageBodyController.clear();
+                },
                 decoration: InputDecoration(
                   hintText: "Type a message",
                   filled: true,
@@ -99,7 +151,12 @@ class ChatPage extends StatelessWidget {
           ),
           IconButton(
             icon: const Icon(Icons.send, color: Colors.blue),
-            onPressed: () {},
+            onPressed: () {
+              final text = controller.messageBodyController.text.trim();
+              if (text.isEmpty) return;
+              controller.sendMessage(body: text);
+              controller.messageBodyController.clear();
+            },
           ),
         ],
       ),
@@ -107,18 +164,35 @@ class ChatPage extends StatelessWidget {
   }
 }
 
-class Message {
-  final String userId;
-  final String name;
-  final String text;
-  final DateTime time;
-  final String? avatarUrl; // if null, we'll show initials
+class LoadOlderMessagesListItem extends StatelessWidget {
+  final ChatController controller;
 
-  Message({
-    required this.userId,
-    required this.name,
-    required this.text,
-    required this.time,
-    this.avatarUrl,
-  });
+  const LoadOlderMessagesListItem({super.key, required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      if (!controller.hasMoreMessages.value) {
+        return const SizedBox(height: 0);
+      }
+
+      return Center(
+        child: SizedBox(
+          width: 160,
+          child: OutlinedButton(
+            onPressed: controller.loadingMore.value
+                ? null
+                : () => controller.loadMessages(loadMore: true),
+            child: controller.loadingMore.value
+                ? const SizedBox(
+                    height: 18,
+                    width: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Text('Older messages', textAlign: TextAlign.center),
+          ),
+        ),
+      );
+    });
+  }
 }

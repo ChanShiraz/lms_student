@@ -26,7 +26,7 @@ class CoursesController extends GetxController {
   }
 
   makeCourseInActive(int scaid, bool value, int acid) async {
-    print('course id $acid');
+   // print('course id $acid');
     try {
       await supabase
           .from('student_course_assignment')

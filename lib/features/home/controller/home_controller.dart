@@ -31,6 +31,7 @@ class HomeController extends GetxController {
     await loadCurrentLY(userModel.schoolId!);
     fetchStudentCourses();
     fetchJournies();
+    refreshUnreadCount();
     super.onInit();
   }
 
@@ -260,5 +261,35 @@ class HomeController extends GetxController {
     double finalLp = averageCourseLp + kwlBonus;
     print('total lp $finalLp');
     return finalLp;
+  }
+
+  Future<int> getTotalUnreadCount(int userId) async {
+    final res = await supabase.rpc(
+      'get_total_unread_count_for_user',
+      params: {'p_userid': userId},
+    );
+
+    return (res as int?) ?? 0;
+  }
+
+  RxInt totalUnread = 0.obs;
+  void refreshUnreadCount() async {
+    final user = userModel;
+    totalUnread.value = await getTotalUnreadCount(user.userId!);
+    print('total unread ${totalUnread.value}');
+  }
+
+  void subscribeToMessages() async {
+    supabase
+        .channel('global-unread')
+        .onPostgresChanges(
+          event: PostgresChangeEvent.insert,
+          schema: 'public',
+          table: 'chat_messages',
+          callback: (_) {
+            refreshUnreadCount();
+          },
+        )
+        .subscribe();
   }
 }

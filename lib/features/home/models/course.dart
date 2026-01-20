@@ -23,6 +23,7 @@ class Course {
   final String? teacher;
   final int? active;
   int? assignmentActive;
+  final int userid_assigned;
   Course({
     required this.cid,
     required this.scaid,
@@ -37,6 +38,7 @@ class Course {
     this.teacher,
     this.active,
     this.assignmentActive,
+    required this.userid_assigned,
   });
 
   Map<String, dynamic> toMap() {
@@ -46,6 +48,7 @@ class Course {
   factory Course.fromMap(Map<String, dynamic> map) {
     return Course(
       cid: map['a_cid'] as int,
+      userid_assigned: map['userid_assigned'] as int,
       scaid: map['scaid'] as int,
       img: map['img'] != null ? map['img'] as String : null,
       title: map['title'] != null ? map['title'] as String : null,

@@ -96,7 +96,7 @@ final routes = [
     page: () => SummativeAssessmentPage(journey: Get.arguments),
   ),
   GetPage(name: MessagingPage.routeName, page: () => MessagingPage()),
-  GetPage(name: ChatPage.routeName, page: () => ChatPage()),
+  //GetPage(name: ChatPage.routeName, page: () => ChatPage()),
   GetPage(name: NotificationsPage.routeName, page: () => NotificationsPage()),
   GetPage(
     name: EditProfilePage.routeName,

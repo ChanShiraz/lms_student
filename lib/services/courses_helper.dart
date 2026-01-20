@@ -18,7 +18,7 @@ class CoursesHelper {
       var query = supabase
           .from('student_course_assignment')
           .select(
-            'alt_courses(a_cid,title1,image,course_type,active,users(last)),alt_learning_year(alyid,current),current_grade,incomplete,graduated,scaid,active',
+            'alt_courses(a_cid,title1,image,course_type,active,users(last),userid_assigned),alt_learning_year(alyid,current),current_grade,incomplete,graduated,scaid,active',
           )
           .eq('userid', userId)
           .eq('learning_year', learningYear)
@@ -38,6 +38,7 @@ class CoursesHelper {
         int acid = row['alt_courses']['a_cid'];
         Course course = Course(
           cid: acid,
+          userid_assigned: row['alt_courses']['userid_assigned'],
           teacher: row['alt_courses']['users']['last'],
           title: row['alt_courses']['title1'],
           img: row['alt_courses']['image'],
